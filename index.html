@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Eco Battle | Field Journal</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,700;0,800;1,400;1,700;1,800&family=Manrope:wght@400;500;600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            bg:'#fdfae8',
+            panel:'#f1eedc',
+            panel2:'#f7f4e2',
+            card:'#fffdf5',
+            ink:'#1c1c11',
+            muted:'#5a6151',
+            line:'#d8d3bf',
+            primary:'#154212',
+            primaryDark:'#0d2b0c',
+            accent:'#1b5e20',
+            warn:'#9a6700',
+            bad:'#a61b1b'
+          },
+          fontFamily: {
+            headline:['Newsreader','serif'],
+            body:['Manrope','sans-serif']
+          },
+          boxShadow: {
+            soft:'0 18px 40px rgba(28,28,17,0.06)'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    html { font-size: 96%; }
+    body { font-family: 'Manrope', sans-serif; background:#fdfae8; color:#1c1c11; }
+    .material-symbols-outlined { font-variation-settings:'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    .sidebar-link-active {
+      border-radius: 9999px;
+      background: #154212;
+      color: #fff;
+      font-weight: 800;
+    }
+    .stat-chip-active {
+      background:#1b5e20 !important;
+      color:#fff !important;
+      border-color:#1b5e20 !important;
+    }
+  </style>
+</head>
+<body class="bg-bg text-ink">
+  <aside class="fixed inset-y-0 left-0 z-40 hidden w-64 border-r border-line/50 bg-panel2 lg:flex lg:flex-col">
+    <div class="border-b border-line/40 px-6 py-6">
+      <a href="index.html" class="font-headline text-3xl font-extrabold italic text-primary">Eco Battle</a>
+      <p class="mt-1 text-[11px] font-extrabold uppercase tracking-[0.22em] text-muted">SHSID Biology</p>
+    </div>
+    <nav class="flex-1 px-3 py-6 text-sm font-bold text-muted">
+      <a href="index.html" class="sidebar-link-active mb-1 flex items-center gap-3 px-4 py-3"><span class="material-symbols-outlined">menu_book</span><span>Field Journal</span></a>
+      <a href="create.html" class="mb-1 flex items-center gap-3 rounded-full px-4 py-3 hover:bg-panel"><span class="material-symbols-outlined">biotech</span><span>Card Lab</span></a>
+      <a href="deck.html" class="mb-1 flex items-center gap-3 rounded-full px-4 py-3 hover:bg-panel"><span class="material-symbols-outlined">style</span><span>My Collection</span></a>
+      <a href="lobby.html" class="mb-1 flex items-center gap-3 rounded-full px-4 py-3 hover:bg-panel"><span class="material-symbols-outlined">swords</span><span>War Room</span></a>
+      <a href="battle.html" class="mb-1 flex items-center gap-3 rounded-full px-4 py-3 hover:bg-panel"><span class="material-symbols-outlined">sports_martial_arts</span><span>Battle</span></a>
+    </nav>
+    <div class="border-t border-line/40 px-6 py-5">
+      <p class="text-xs leading-5 text-muted">
+        Build real organism cards, prepare a 5-card deck, and test local Top Trumps battles before moving to multiplayer.
+      </p>
+      <div class="mt-4 grid grid-cols-2 gap-3">
+        <div class="rounded-2xl border border-line/60 bg-card p-3">
+          <p class="text-[10px] font-extrabold uppercase tracking-[0.18em] text-muted">Cards made</p>
+          <p id="cardsMadeCount" class="mt-2 text-2xl font-extrabold text-primary">0</p>
+        </div>
+        <div class="rounded-2xl border border-line/60 bg-card p-3">
+          <p class="text-[10px] font-extrabold uppercase tracking-[0.18em] text-muted">Deck ready</p>
+          <p id="deckReadyCount" class="mt-2 text-2xl font-extrabold text-primary">0/5</p>
+        </div>
+        <div class="rounded-2xl border border-line/60 bg-card p-3">
+          <p class="text-[10px] font-extrabold uppercase tracking-[0.18em] text-muted">Last winner</p>
+          <p id="lastWinnerText" class="mt-2 text-sm font-extrabold text-primary">None</p>
+        </div>
+        <div class="rounded-2xl border border-line/60 bg-card p-3">
+          <p class="text-[10px] font-extrabold uppercase tracking-[0.18em] text-muted">Claimed card</p>
+          <p id="claimedCardText" class="mt-2 text-sm font-extrabold text-primary">None</p>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="min-h-screen lg:ml-64">
+    <header class="border-b border-line/50 bg-bg/95 px-5 py-4 backdrop-blur lg:px-10">
+      <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+        <div>
+          <p class="text-[11px] font-extrabold uppercase tracking-[0.24em] text-muted">Field Journal</p>
+          <h1 class="mt-1 font-headline text-4xl font-extrabold text-primary md:text-5xl">Eco Battle dashboard</h1>
+          <p class="mt-2 max-w-3xl text-sm text-muted md:text-base">This is the real home page for the build you now have: create cards, grow a collection, set a 5-card War Room deck, then launch a Top Trumps-style battle.</p>
+        </div>
+        <div class="flex flex-wrap gap-3">
+          <a href="create.html" class="rounded-full bg-primary px-5 py-3 text-sm font-extrabold text-white hover:bg-primaryDark">Create card</a>
+          <a href="deck.html" class="rounded-full border border-line bg-card px-5 py-3 text-sm font-extrabold text-primary hover:bg-panel">Open collection</a>
+          <a href="battle.html" class="rounded-full border border-line bg-card px-5 py-3 text-sm font-extrabold text-primary hover:bg-panel">Go to battle</a>
+        </div>
+      </div>
+    </header>
+
+    <section class="px-5 py-6 lg:px-10">
+      <div class="grid gap-5 xl:grid-cols-[1.25fr_0.9fr]">
+        <div class="rounded-[28px] border border-line/60 bg-card p-6 shadow-soft md:p-8">
+          <div>
+            <p class="text-[11px] font-extrabold uppercase tracking-[0.22em] text-muted">Current status</p>
+            <h2 class="mt-1 font-headline text-3xl font-extrabold text-primary">Your next step</h2>
+            <p id="nextStepText" class="mt-3 max-w-2xl text-sm leading-6 text-muted">Loading current progress…</p>
+          </div>
+          <div class="mt-5 rounded-2xl border border-line/60 bg-panel2 p-4 text-sm text-muted lg:hidden">
+            Cards made: <span id="cardsMadeCountMobile" class="font-extrabold text-primary">0</span>
+            <span class="mx-2">•</span>
+            Deck ready: <span id="deckReadyCountMobile" class="font-extrabold text-primary">0/5</span>
+            <span class="mx-2">•</span>
+            Last winner: <span id="lastWinnerTextMobile" class="font-extrabold text-primary">None</span>
+          </div>
+          <div class="mt-6 grid gap-4 md:grid-cols-3">
+            <a href="create.html" class="rounded-2xl border border-line/60 bg-panel2 p-5 hover:bg-panel">
+              <div class="flex items-center gap-3">
+                <span class="material-symbols-outlined text-primary">biotech</span>
+                <h3 class="text-base font-extrabold text-primary">Card Lab</h3>
+              </div>
+              <p class="mt-3 text-sm leading-6 text-muted">Create organisms with common name, scientific name, habitat, bio, image, and five balanced stats.</p>
+            </a>
+            <a href="lobby.html" class="rounded-2xl border border-line/60 bg-panel2 p-5 hover:bg-panel">
+              <div class="flex items-center gap-3">
+                <span class="material-symbols-outlined text-primary">swords</span>
+                <h3 class="text-base font-extrabold text-primary">War Room</h3>
+              </div>
+              <p class="mt-3 text-sm leading-6 text-muted">Select exactly five cards for the active deck. This is the deck used when a battle is launched.</p>
+            </a>
+            <a href="battle.html" class="rounded-2xl border border-line/60 bg-panel2 p-5 hover:bg-panel">
+              <div class="flex items-center gap-3">
+                <span class="material-symbols-outlined text-primary">sports_martial_arts</span>
+                <h3 class="text-base font-extrabold text-primary">Battle</h3>
+              </div>
+              <p class="mt-3 text-sm leading-6 text-muted">Launch a local Top Trumps-style test match, then return here after the result is saved.</p>
+            </a>
+          </div>
+        </div>
+
+        <div class="rounded-[28px] border border-line/60 bg-card p-6 shadow-soft md:p-8">
+          <p class="text-[11px] font-extrabold uppercase tracking-[0.22em] text-muted">Core rules</p>
+          <h2 class="mt-1 font-headline text-3xl font-extrabold text-primary">How Eco Battle works</h2>
+          <div class="mt-5 space-y-4 text-sm leading-6 text-muted">
+            <p><span class="font-extrabold text-primary">1.</span> Every card uses the same five stats: Body Size, Food Chain &amp; Energy, Habitat Adaptability, Intelligence, and Eco-Impact.</p>
+            <p><span class="font-extrabold text-primary">2.</span> The combined total of all five stats must stay at or below <span class="font-extrabold text-primary">500</span>.</p>
+            <p><span class="font-extrabold text-primary">3.</span> Build a collection first, then choose exactly <span class="font-extrabold text-primary">5 cards</span> in the War Room.</p>
+            <p><span class="font-extrabold text-primary">4.</span> During a battle, only the <span class="font-extrabold text-primary">top card</span> is played each round, following Top Trumps logic.</p>
+            <p><span class="font-extrabold text-primary">5.</span> At the end of a match, the winner can claim <span class="font-extrabold text-primary">one rival card</span>.</p>
+          </div>
+          <div class="mt-6 grid grid-cols-5 gap-2">
+            <div class="rounded-xl border border-line bg-panel2 p-3 text-center">
+              <p class="text-[11px] font-extrabold uppercase tracking-[0.18em] text-muted">B</p>
+              <p class="mt-1 text-xs font-bold text-primary">Body</p>
+            </div>
+            <div class="rounded-xl border border-line bg-panel2 p-3 text-center">
+              <p class="text-[11px] font-extrabold uppercase tracking-[0.18em] text-muted">F</p>
+              <p class="mt-1 text-xs font-bold text-primary">Food</p>
+            </div>
+            <div class="rounded-xl border border-line bg-panel2 p-3 text-center">
+              <p class="text-[11px] font-extrabold uppercase tracking-[0.18em] text-muted">H</p>
+              <p class="mt-1 text-xs font-bold text-primary">Habitat</p>
+            </div>
+            <div class="rounded-xl border border-line bg-panel2 p-3 text-center">
+              <p class="text-[11px] font-extrabold uppercase tracking-[0.18em] text-muted">I</p>
+              <p class="mt-1 text-xs font-bold text-primary">Intel</p>
+            </div>
+            <div class="rounded-xl border border-line bg-panel2 p-3 text-center">
+              <p class="text-[11px] font-extrabold uppercase tracking-[0.18em] text-muted">E</p>
+              <p class="mt-1 text-xs font-bold text-primary">Impact</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="px-5 pb-8 lg:px-10">
+      <div class="grid gap-5 xl:grid-cols-[1.05fr_0.95fr]">
+        <div class="rounded-[28px] border border-line/60 bg-card p-6 shadow-soft md:p-8">
+          <div class="flex items-center justify-between gap-4">
+            <div>
+              <p class="text-[11px] font-extrabold uppercase tracking-[0.22em] text-muted">Starter progress</p>
+              <h2 class="mt-1 font-headline text-3xl font-extrabold text-primary">Collection milestones</h2>
+            </div>
+            <a href="deck.html" class="rounded-full border border-line bg-card px-4 py-2 text-sm font-extrabold text-primary hover:bg-panel">View collection</a>
+          </div>
+          <div class="mt-5 rounded-2xl border border-line/60 bg-panel2 p-5">
+            <div class="flex items-center justify-between gap-4 text-sm font-bold text-primary">
+              <span>Progress toward 5-card starter deck</span>
+              <span id="starterProgressText">0 / 5</span>
+            </div>
+            <div class="mt-3 h-3 overflow-hidden rounded-full bg-card">
+              <div id="starterProgressBar" class="h-full rounded-full bg-accent" style="width:0%"></div>
+            </div>
+            <p class="mt-3 text-sm text-muted">A battle-ready prototype begins when the collection has at least five cards and the War Room deck has been saved.</p>
+          </div>
+          <div class="mt-5 grid gap-4 md:grid-cols-2">
+            <div class="rounded-2xl border border-line/60 bg-panel2 p-5">
+              <p class="text-[11px] font-extrabold uppercase tracking-[0.18em] text-muted">Active deck</p>
+              <p id="activeDeckStatus" class="mt-2 text-lg font-extrabold text-primary">Not ready</p>
+              <p class="mt-2 text-sm text-muted">Choose exactly five cards in the War Room before the Battle page should be used.</p>
+            </div>
+            <div class="rounded-2xl border border-line/60 bg-panel2 p-5">
+              <p class="text-[11px] font-extrabold uppercase tracking-[0.18em] text-muted">Last match summary</p>
+              <p id="lastMatchSummary" class="mt-2 text-sm leading-6 text-muted">No match result saved yet.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="rounded-[28px] border border-line/60 bg-card p-6 shadow-soft md:p-8">
+          <div class="flex items-center justify-between gap-4">
+            <div>
+              <p class="text-[11px] font-extrabold uppercase tracking-[0.22em] text-muted">Collection preview</p>
+              <h2 class="mt-1 font-headline text-3xl font-extrabold text-primary">Newest cards</h2>
+            </div>
+            <a href="create.html" class="rounded-full bg-primary px-4 py-2 text-sm font-extrabold text-white hover:bg-primaryDark">Make another card</a>
+          </div>
+          <div id="recentCardsEmpty" class="mt-5 rounded-2xl border border-dashed border-line bg-panel2 p-8 text-sm text-muted">No cards saved yet. Start in the Card Lab.</div>
+          <div id="recentCardsGrid" class="mt-5 hidden gap-4 md:grid-cols-2"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script>
+  (async () => {
+    const session = await window.ecoBattle.getSession();
+    if (!session) {
+      window.location.href = "login.html";
+    }
+  })();
+</script>
+  <script>
+    const COLLECTION_KEY = 'ecoBattleCards';
+    const ACTIVE_DECK_KEY = 'ecoBattleActiveDeck';
+    const LAST_MATCH_KEY = 'ecoBattleLastMatch';
+    const client = window.ecoBattle?.client;
+    let currentSession = null;
+
+    const statMeta = [
+      ['body_size','B'],
+      ['food_chain_energy','F'],
+      ['habitat_adaptability','H'],
+      ['intelligence','I'],
+      ['eco_impact','E']
+    ];
+
+   async function getCards() {
+  try {
+    const cards = await getCardsFromSupabase();
+    localStorage.setItem(COLLECTION_KEY, JSON.stringify(cards));
+    return cards;
+  } catch (error) {
+    console.error('Supabase cards load failed:', error.message);
+  }
+
+  try {
+    const parsed = JSON.parse(localStorage.getItem(COLLECTION_KEY) || '[]');
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+async function getActiveDeck() {
+  try {
+    const deck = await getActiveDeckFromSupabase();
+    if (deck.length) {
+      localStorage.setItem(ACTIVE_DECK_KEY, JSON.stringify(deck));
+      return deck;
+    }
+  } catch (error) {
+    console.error('Supabase active deck load failed:', error.message);
+  }
+
+  try {
+    const parsed = JSON.parse(localStorage.getItem(ACTIVE_DECK_KEY) || '[]');
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+async function getLastMatch() {
+  try {
+    const match = await getLastMatchFromSupabase();
+    if (match) {
+      localStorage.setItem(LAST_MATCH_KEY, JSON.stringify(match));
+      return match;
+    }
+  } catch (error) {
+    console.error('Supabase last match load failed:', error.message);
+  }
+
+  try {
+    const parsed = JSON.parse(localStorage.getItem(LAST_MATCH_KEY) || 'null');
+    return parsed && typeof parsed === 'object' ? parsed : null;
+  } catch {
+    return null;
+  }
+}
+
+async function requireSessionOrRedirect() {
+  if (!window.ecoBattle || !client) {
+    alert('Supabase config not loaded. Check js/config.js.');
+    return null;
+  }
+
+  const session = await window.ecoBattle.getSession();
+  if (!session) {
+    window.location.href = 'login.html';
+    return null;
+  }
+
+  currentSession = session;
+  return session;
+}
+
+async function getCardsFromSupabase() {
+  const session = currentSession || await requireSessionOrRedirect();
+  if (!session) return [];
+
+  const { data, error } = await client
+    .from('cards')
+    .select('*')
+    .eq('user_id', session.user.id)
+    .order('created_at', { ascending: false });
+
+  if (error) throw error;
+  return data || [];
+}
+
+async function getActiveDeckFromSupabase() {
+  const session = currentSession || await requireSessionOrRedirect();
+  if (!session) return [];
+
+  const { data, error } = await client
+    .from('active_decks')
+    .select('card_ids')
+    .eq('user_id', session.user.id)
+    .maybeSingle();
+
+  if (error) throw error;
+
+  const ids = Array.isArray(data?.card_ids) ? data.card_ids : [];
+  if (!ids.length) return [];
+
+  const { data: cards, error: cardsError } = await client
+    .from('cards')
+    .select('*')
+    .eq('user_id', session.user.id)
+    .in('id', ids);
+
+  if (cardsError) throw cardsError;
+
+  const cardMap = new Map((cards || []).map(card => [card.id, card]));
+  return ids.map(id => cardMap.get(id)).filter(Boolean);
+}
+
+async function getLastMatchFromSupabase() {
+  const session = currentSession || await requireSessionOrRedirect();
+  if (!session) return null;
+
+  const { data, error } = await client
+    .from('match_summaries')
+    .select('*')
+    .eq('user_id', session.user.id)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (error) throw error;
+  return data || null;
+}
+
+    function getHighestKey(card) {
+      const keys = statMeta.map(([key]) => key);
+      let highest = keys[0];
+      let value = Number(card?.[highest] || 0);
+      keys.slice(1).forEach((key) => {
+        const candidate = Number(card?.[key] || 0);
+        if (candidate > value) {
+          value = candidate;
+          highest = key;
+        }
+      });
+      return highest;
+    }
+
+    function formatResultTime(iso) {
+      if (!iso) return 'No finished match saved yet.';
+      const date = new Date(iso);
+      if (Number.isNaN(date.getTime())) return 'No finished match saved yet.';
+      return date.toLocaleString();
+    }
+
+    function makeRecentCard(card) {
+      const highest = getHighestKey(card);
+      const image = card.image_url || '';
+      const safeImage = image ? `<img src="${image}" alt="${card.common_name || 'Organism'}" class="h-40 w-full rounded-2xl border border-line/60 object-cover" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');">` : '';
+      const fallback = `<div class="${image ? 'hidden ' : ''}flex h-40 w-full items-center justify-center rounded-2xl border border-dashed border-line bg-panel2 text-sm font-bold text-muted">No image</div>`;
+      const chips = statMeta.map(([key,label]) => {
+        const active = key === highest ? 'stat-chip-active' : 'bg-panel2 text-primary';
+        return `<div class="rounded-full border border-line px-2.5 py-1 text-[11px] font-extrabold ${active}">${label} ${Number(card[key] || 0)}</div>`;
+      }).join('');
+
+      return `
+        <article class="rounded-3xl border border-line/60 bg-panel2 p-4">
+          ${safeImage}
+          ${fallback}
+          <div class="mt-4">
+            <h3 class="font-headline text-2xl font-extrabold text-primary">${card.common_name || 'Untitled card'}</h3>
+            <p class="mt-1 text-xs font-bold italic text-muted">${card.scientific_name || 'No scientific name'}</p>
+            <p class="mt-3 line-clamp-3 text-sm leading-6 text-muted">${card.bio || 'No bio added yet.'}</p>
+            <div class="mt-4 flex flex-wrap gap-2">${chips}</div>
+          </div>
+        </article>
+      `;
+    }
+
+    async function renderHome() {
+  const cards = await getCards();
+  const activeDeck = await getActiveDeck();
+  const lastMatch = await getLastMatch();
+
+      const cardsMade = cards.length;
+      const activeDeckCount = Array.isArray(activeDeck) ? activeDeck.length : 0;
+      const starterProgress = Math.min(cardsMade, 5);
+      const progressPercent = Math.min((starterProgress / 5) * 100, 100);
+
+      document.getElementById('cardsMadeCount').textContent = String(cardsMade);
+      document.getElementById('deckReadyCount').textContent = `${activeDeckCount}/5`;
+      document.getElementById('starterProgressText').textContent = `${starterProgress} / 5`;
+      document.getElementById('starterProgressBar').style.width = `${progressPercent}%`;
+      document.getElementById('activeDeckStatus').textContent = activeDeckCount === 5 ? 'Ready for battle' : 'Not ready';
+
+      const lastWinner = lastMatch?.winner ? (lastMatch.winner === 'player' ? 'You' : 'Rival') : 'None';
+      document.getElementById('lastWinnerText').textContent = lastWinner;
+      document.getElementById('claimedCardText').textContent = lastMatch?.claimed_card_name || 'None';
+      const cardsMadeMobile = document.getElementById('cardsMadeCountMobile');
+      const deckReadyMobile = document.getElementById('deckReadyCountMobile');
+      const lastWinnerMobile = document.getElementById('lastWinnerTextMobile');
+      if (cardsMadeMobile) cardsMadeMobile.textContent = String(cardsMade);
+      if (deckReadyMobile) deckReadyMobile.textContent = `${activeDeckCount}/5`;
+      if (lastWinnerMobile) lastWinnerMobile.textContent = lastWinner;
+
+      document.getElementById('lastMatchSummary').textContent = lastMatch
+        ? `${lastMatch.winner === 'player' ? 'You' : 'Rival'} won ${lastMatch.player_cards ?? 0} to ${lastMatch.rival_cards ?? 0}. Finished ${formatResultTime(lastMatch.finished_at)}.`
+        : 'No match result saved yet.';
+
+      const nextStepEl = document.getElementById('nextStepText');
+      if (cardsMade < 5) {
+        nextStepEl.textContent = `You currently have ${cardsMade} card${cardsMade === 1 ? '' : 's'}. The next step is to keep building the collection until you reach at least 5 cards.`;
+      } else if (activeDeckCount !== 5) {
+        nextStepEl.textContent = `You have enough cards to start battling, but the War Room deck is not ready. Choose exactly 5 cards and save that deck before entering Battle.`;
+      } else {
+        nextStepEl.textContent = `Your collection and War Room deck are both ready. The next step is to enter Battle and launch a local Top Trumps-style match.`;
+      }
+
+      const recentCardsGrid = document.getElementById('recentCardsGrid');
+      const recentCardsEmpty = document.getElementById('recentCardsEmpty');
+      if (!cards.length) {
+        recentCardsEmpty.classList.remove('hidden');
+        recentCardsGrid.classList.add('hidden');
+        recentCardsGrid.innerHTML = '';
+      } else {
+        recentCardsEmpty.classList.add('hidden');
+        recentCardsGrid.classList.remove('hidden');
+        recentCardsGrid.innerHTML = cards.slice().sort((a,b) => new Date(b.created_at || 0) - new Date(a.created_at || 0)).slice(0,4).map(makeRecentCard).join('');
+      }
+    }
+
+    async function initializeHomePage() {
+  try {
+    await requireSessionOrRedirect();
+    await renderHome();
+  } catch (error) {
+    console.error(error);
+    document.getElementById('nextStepText').textContent = `Could not load dashboard data: ${error.message}`;
+  }
+}
+
+initializeHomePage();
+  </script>
+</body>
+</html>

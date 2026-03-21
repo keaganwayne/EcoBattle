@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>War Room | Eco Battle</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,700;0,800;1,400;1,700;1,800&family=Manrope:wght@400;500;600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: { bg:'#fdfae8', panel:'#f1eedc', panel2:'#f7f4e2', card:'#fffdf5', ink:'#1c1c11', muted:'#5a6155', line:'#c2c9bb', primary:'#154212', primaryDark:'#11330e', blue:'#dceff8', warn:'#ba1a1a' },
+          fontFamily: { headline:['Newsreader','serif'], body:['Manrope','sans-serif'] },
+          boxShadow: { soft:'0 18px 40px rgba(28,28,17,0.08)' }
+        }
+      }
+    }
+  </script>
+  <style>
+    .material-symbols-outlined { font-variation-settings:'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    body { background:#fdfae8; }
+    .sidebar-link-active { background: #154212; color: #ffffff; border-radius: 999px 0 0 999px; }
+    .sidebar-link-active .material-symbols-outlined { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    .card-selected { outline: 3px solid #154212; background: #eef6e8; }
+    .stat-chip-active { background:#154212 !important; color:#fff !important; }
+    .stat-chip-active .stat-chip-label { color:rgba(255,255,255,.8) !important; }
+    .stat-chip-active .stat-chip-value { color:#fff !important; }
+  </style>
+</head>
+<body class="font-body text-ink">
+  <aside class="fixed inset-y-0 left-0 z-40 hidden w-64 border-r border-line/50 bg-panel2 lg:flex lg:flex-col">
+    <div class="border-b border-line/40 px-6 py-6">
+      <a href="index.html" class="font-headline text-3xl font-extrabold italic text-primary">Eco Battle</a>
+      <p class="mt-1 text-[11px] font-extrabold uppercase tracking-[0.22em] text-muted">SHSID Biology</p>
+    </div>
+    <nav class="flex-1 px-3 py-6 text-sm font-bold text-muted">
+      <a href="index.html" class="mb-1 flex items-center gap-3 rounded-full px-4 py-3 hover:bg-panel"><span class="material-symbols-outlined">menu_book</span><span>Field Journal</span></a>
+      <a href="create.html" class="mb-1 flex items-center gap-3 rounded-full px-4 py-3 hover:bg-panel"><span class="material-symbols-outlined">biotech</span><span>Card Lab</span></a>
+      <a href="deck.html" class="mb-1 flex items-center gap-3 rounded-full px-4 py-3 hover:bg-panel"><span class="material-symbols-outlined">style</span><span>My Collection</span></a>
+      <a href="lobby.html" class="sidebar-link-active mb-1 flex items-center gap-3 px-4 py-3"><span class="material-symbols-outlined">swords</span><span>War Room</span></a>
+      <a href="battle.html" class="mb-1 flex items-center gap-3 rounded-full px-4 py-3 hover:bg-panel"><span class="material-symbols-outlined">sports_martial_arts</span><span>Battle</span></a>
+      <a href="battleground.html" class="mb-1 flex items-center gap-3 rounded-full px-4 py-3 hover:bg-panel">
+  <span class="material-symbols-outlined">stadium</span>
+  <span>Battleground</span>
+</a>
+    </nav>
+    <div class="border-t border-line/40 px-6 py-5 text-xs text-muted">War Room is only for choosing the 5-card battle deck. Active lobbies belong on the Battle page.</div>
+  </aside>
+
+  <div class="min-h-screen lg:pl-64">
+    <header class="sticky top-0 z-30 flex items-center justify-between border-b-4 border-primary bg-bg px-5 py-4 lg:px-8">
+      <div>
+        <p class="text-[11px] font-extrabold uppercase tracking-[0.24em] text-primary">SHSID Eco Battle</p>
+        <h1 class="font-headline text-3xl font-extrabold italic text-primary sm:text-4xl">War Room</h1>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="deck.html" class="rounded-full bg-panel px-4 py-2 text-sm font-bold text-muted hover:bg-panel2">My Collection</a>
+        <a id="battleNowBtn" href="battle.html" class="rounded-full bg-primary px-5 py-2 text-sm font-bold text-white hover:bg-primaryDark">Go to Battle</a>
+      </div>
+    </header>
+
+    <main class="mx-auto max-w-7xl px-5 py-8 lg:px-8">
+      <section class="grid gap-8 xl:grid-cols-[360px_minmax(0,1fr)]">
+        <div class="space-y-6">
+          <div class="rounded-3xl bg-panel p-6 shadow-soft ring-1 ring-line/60">
+            <div class="flex items-end justify-between gap-4">
+              <div>
+                <div class="text-[11px] font-extrabold uppercase tracking-[0.18em] text-muted">Deck Selection</div>
+                <h2 class="mt-1 font-headline text-3xl font-bold italic text-primary">Choose 5 cards</h2>
+              </div>
+              <div class="text-right">
+                <div class="text-[11px] font-extrabold uppercase tracking-[0.18em] text-muted">Selected</div>
+                <div id="selectedCount" class="mt-1 font-headline text-3xl font-bold text-primary">0 / 5</div>
+              </div>
+            </div>
+            <div class="mt-4 h-3 overflow-hidden rounded-full bg-card"><div id="selectedBar" class="h-full rounded-full bg-primary" style="width:0%"></div></div>
+            <p id="selectionMessage" class="mt-4 text-sm text-muted">Select exactly five cards from your saved collection to prepare a battle deck.</p>
+            <div id="slotGrid" class="mt-6 grid grid-cols-5 gap-2"></div>
+            <div class="mt-6 flex flex-wrap gap-3">
+              <button id="clearSelectionBtn" type="button" class="rounded-full border border-line bg-bg px-4 py-2 text-sm font-bold text-muted hover:bg-panel">Clear Selection</button>
+              <button id="openLobbyBtn" type="button" class="rounded-full bg-primary px-5 py-2 text-sm font-bold text-white hover:bg-primaryDark">Save Active Deck</button>
+            </div>
+            <p id="openLobbyStatus" class="mt-4 text-sm text-muted"></p>
+          </div>
+
+          <div class="rounded-3xl bg-blue p-6 shadow-soft">
+            <h3 class="font-headline text-2xl font-bold italic text-primary">Stat key</h3>
+            <p class="mt-3 text-sm leading-relaxed text-ink"><span class="font-bold">B</span> = Body Size, <span class="font-bold">F</span> = Food Chain &amp; Energy, <span class="font-bold">H</span> = Habitat Adaptability, <span class="font-bold">I</span> = Intelligence, <span class="font-bold">E</span> = Eco-Impact.</p>
+            <p class="mt-2 text-sm leading-relaxed text-ink">The highest stat on each card is highlighted in green for quick scanning.</p>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <div class="rounded-3xl bg-panel p-6 shadow-soft ring-1 ring-line/60">
+            <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+              <div>
+                <div class="text-[11px] font-extrabold uppercase tracking-[0.18em] text-muted">Saved Collection</div>
+                <h2 class="mt-1 font-headline text-3xl font-bold italic text-primary">Selectable cards</h2>
+                <p class="mt-2 text-sm text-muted">Click a card to select or deselect it. Exactly five must be selected before moving into Battle.</p>
+              </div>
+              <a href="create.html" class="rounded-full bg-primary px-4 py-2 text-sm font-bold text-white hover:bg-primaryDark">Create Card</a>
+            </div>
+          </div>
+
+          <div id="cardGrid" class="grid gap-6 md:grid-cols-2 2xl:grid-cols-3"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+  <script>
+    let currentSession = null;
+const client = window.ecoBattle?.client;
+const ACTIVE_DECK_KEY = 'ecoBattleActiveDeck';
+let allCards = [];
+    const DEFAULT_PREVIEW_IMAGE = "data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20800%20600%27%3E%3Crect%20width%3D%27800%27%20height%3D%27600%27%20fill%3D%27%23efe9d7%27/%3E%3Crect%20x%3D%2724%27%20y%3D%2724%27%20width%3D%27752%27%20height%3D%27552%27%20rx%3D%2728%27%20ry%3D%2728%27%20fill%3D%27%23fbf8ee%27%20stroke%3D%27%23d7d3c2%27%20stroke-width%3D%274%27%20stroke-dasharray%3D%2710%2010%27/%3E%3Ccircle%20cx%3D%27400%27%20cy%3D%27230%27%20r%3D%2770%27%20fill%3D%27%231b5e20%27%20opacity%3D%270.12%27/%3E%3Cpath%20d%3D%27M330%20360h140%27%20stroke%3D%27%231b5e20%27%20stroke-width%3D%2718%27%20stroke-linecap%3D%27round%27%20opacity%3D%270.5%27/%3E%3Cpath%20d%3D%27M355%20225l35%2035%2055-65%27%20fill%3D%27none%27%20stroke%3D%27%231b5e20%27%20stroke-width%3D%2718%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%20opacity%3D%270.7%27/%3E%3Ctext%20x%3D%27400%27%20y%3D%27485%27%20text-anchor%3D%27middle%27%20font-family%3D%27Arial%2C%20sans-serif%27%20font-size%3D%2734%27%20fill%3D%27%2366705d%27%3ENo%20image%20selected%3C/text%3E%3C/svg%3E";
+
+    const els = {
+      selectedCount: document.getElementById('selectedCount'),
+      selectedBar: document.getElementById('selectedBar'),
+      selectionMessage: document.getElementById('selectionMessage'),
+      slotGrid: document.getElementById('slotGrid'),
+      clearSelectionBtn: document.getElementById('clearSelectionBtn'),
+      openLobbyBtn: document.getElementById('openLobbyBtn'),
+      openLobbyStatus: document.getElementById('openLobbyStatus'),
+      battleNowBtn: document.getElementById('battleNowBtn'),
+      cardGrid: document.getElementById('cardGrid')
+    };
+
+    let selectedIds = [];
+
+    async function requireSessionOrRedirect() {
+  if (!window.ecoBattle || !client) {
+    alert('Supabase config not loaded. Check js/config.js.');
+    return null;
+  }
+
+  const session = await window.ecoBattle.getSession();
+  if (!session) {
+    window.location.href = 'login.html';
+    return null;
+  }
+
+  currentSession = session;
+  return session;
+}
+
+async function loadCards() {
+  const session = currentSession || await requireSessionOrRedirect();
+  if (!session) return [];
+
+  const { data, error } = await client
+    .from('cards')
+    .select('*')
+    .eq('user_id', session.user.id)
+    .order('created_at', { ascending: false });
+
+  if (error) throw error;
+
+  allCards = data || [];
+  return allCards;
+}
+async function loadActiveDeckIdsFromSupabase() {
+  const session = currentSession || await requireSessionOrRedirect();
+  if (!session) return [];
+
+  const { data, error } = await client
+    .from('active_decks')
+    .select('card_ids')
+    .eq('user_id', session.user.id)
+    .maybeSingle();
+
+  if (error) throw error;
+  return Array.isArray(data?.card_ids) ? data.card_ids : [];
+}
+
+async function saveActiveDeckIdsToSupabase(cardIds) {
+  const session = currentSession || await requireSessionOrRedirect();
+  if (!session) return;
+
+  const { error } = await client
+    .from('active_decks')
+    .upsert(
+      {
+        user_id: session.user.id,
+        card_ids: cardIds,
+        updated_at: new Date().toISOString()
+      },
+      { onConflict: 'user_id' }
+    );
+
+  if (error) throw error;
+}
+    function getActiveDeck() {
+      try {
+        const parsed = JSON.parse(localStorage.getItem(ACTIVE_DECK_KEY) || '[]');
+        return Array.isArray(parsed) ? parsed : [];
+      } catch { return []; }
+    }
+
+    function saveActiveDeck(cards) {
+      localStorage.setItem(ACTIVE_DECK_KEY, JSON.stringify(cards));
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function getSelectedCards() {
+  return selectedIds.map(id => allCards.find(card => card.id === id)).filter(Boolean);
+}
+
+    function getHighestStatKey(card) {
+      const stats = {
+        B: Number(card.body_size || 0),
+        F: Number(card.food_chain_energy || 0),
+        H: Number(card.habitat_adaptability || 0),
+        I: Number(card.intelligence || 0),
+        E: Number(card.eco_impact || 0)
+      };
+      const max = Math.max(...Object.values(stats));
+      return Object.keys(stats).filter(key => stats[key] === max);
+    }
+
+    function renderStatChips(card) {
+      const highest = getHighestStatKey(card);
+      const stats = [
+        ['B', Number(card.body_size || 0)],
+        ['F', Number(card.food_chain_energy || 0)],
+        ['H', Number(card.habitat_adaptability || 0)],
+        ['I', Number(card.intelligence || 0)],
+        ['E', Number(card.eco_impact || 0)]
+      ];
+      return stats.map(([label, value]) => `
+        <div class="rounded-xl bg-panel2 px-2 py-2 text-center ${highest.includes(label) ? 'stat-chip-active' : ''}">
+          <div class="stat-chip-label text-[10px] font-extrabold uppercase tracking-[0.16em] text-muted">${label}</div>
+          <div class="stat-chip-value mt-1 text-lg font-extrabold text-primary">${value}</div>
+        </div>
+      `).join('');
+    }
+
+    function renderSlots() {
+      const selectedCards = getSelectedCards();
+      els.slotGrid.innerHTML = Array.from({ length: 5 }).map((_, index) => {
+        const card = selectedCards[index];
+        if (!card) return `<div class="aspect-[3/4] rounded-xl border-2 border-dashed border-line bg-card"></div>`;
+        return `<div class="aspect-[3/4] overflow-hidden rounded-xl border border-line bg-card"><img src="${escapeHtml(card.image_url || DEFAULT_PREVIEW_IMAGE)}" alt="${escapeHtml(card.common_name || 'Selected card')}" class="h-full w-full object-cover" onerror="this.src='${DEFAULT_PREVIEW_IMAGE}'"></div>`;
+      }).join('');
+    }
+
+    function updateSelectionUI() {
+      const count = selectedIds.length;
+      const ready = count === 5;
+      els.selectedCount.textContent = `${count} / 5`;
+      els.selectedBar.style.width = `${count / 5 * 100}%`;
+      els.selectionMessage.textContent = ready
+        ? 'Deck ready. Save it, then move to Battle to look for active lobbies.'
+        : 'Select exactly five cards from your saved collection to prepare a battle deck.';
+      els.openLobbyBtn.disabled = !ready;
+      els.openLobbyBtn.className = `rounded-full px-5 py-2 text-sm font-bold ${ready ? 'bg-primary text-white hover:bg-primaryDark' : 'bg-card text-muted ring-1 ring-line/60 cursor-not-allowed'}`;
+      els.battleNowBtn.className = `rounded-full px-5 py-2 text-sm font-bold ${ready ? 'bg-primary text-white hover:bg-primaryDark' : 'bg-card text-muted ring-1 ring-line/60'}`;
+      els.battleNowBtn.setAttribute('aria-disabled', ready ? 'false' : 'true');
+      renderSlots();
+    }
+
+    function toggleCardSelection(cardId) {
+  if (!allCards.some(card => card.id === cardId)) return;
+      if (selectedIds.includes(cardId)) {
+        selectedIds = selectedIds.filter(id => id !== cardId);
+      } else {
+        if (selectedIds.length >= 5) return;
+        selectedIds.push(cardId);
+      }
+      renderCards();
+      updateSelectionUI();
+    }
+
+    function renderCards() {
+  const cards = allCards;
+      if (!cards.length) {
+        els.cardGrid.innerHTML = `
+          <div class="col-span-full rounded-3xl bg-panel p-8 text-center shadow-soft ring-1 ring-line/60">
+            <div class="font-headline text-3xl font-bold italic text-primary">No saved cards yet</div>
+            <p class="mt-3 text-sm text-muted">Create cards first, then come back to choose your 5-card battle deck.</p>
+            <a href="create.html" class="mt-5 inline-flex rounded-full bg-primary px-5 py-3 text-sm font-bold text-white hover:bg-primaryDark">Go to Card Lab</a>
+          </div>`;
+        selectedIds = [];
+        updateSelectionUI();
+        return;
+      }
+
+      selectedIds = selectedIds.filter(id => cards.some(card => card.id === id)).slice(0, 5);
+
+      els.cardGrid.innerHTML = cards.map(card => {
+        const selected = selectedIds.includes(card.id);
+        const title = escapeHtml(card.common_name || card.scientific_name || 'Unnamed Card');
+        return `
+          <button type="button" onclick="toggleCardSelection('${card.id}')" class="text-left rounded-3xl bg-card p-5 shadow-soft ring-1 ring-line/60 transition hover:-translate-y-1 ${selected ? 'card-selected' : ''}">
+            <div class="overflow-hidden rounded-2xl border border-line/60 bg-panel2">
+              <img src="${escapeHtml(card.image_url || DEFAULT_PREVIEW_IMAGE)}" alt="${title}" class="h-48 w-full object-cover" onerror="this.src='${DEFAULT_PREVIEW_IMAGE}'">
+            </div>
+            <div class="mt-4 flex items-start justify-between gap-4">
+              <div>
+                <div class="font-headline text-2xl font-bold italic leading-none text-primary">${title}</div>
+                <div class="mt-1 text-xs italic text-muted">${escapeHtml(card.scientific_name || '—')}</div>
+              </div>
+              <div class="rounded-full ${selected ? 'bg-primary text-white' : 'bg-panel text-primary'} px-3 py-1 text-[10px] font-extrabold uppercase tracking-[0.16em]">${selected ? 'Selected' : 'Available'}</div>
+            </div>
+            <div class="mt-4 grid grid-cols-5 gap-2 text-sm">${renderStatChips(card)}</div>
+          </button>`;
+      }).join('');
+
+      updateSelectionUI();
+    }
+
+    els.clearSelectionBtn.addEventListener('click', () => {
+      selectedIds = [];
+      els.openLobbyStatus.textContent = '';
+      renderCards();
+      updateSelectionUI();
+    });
+
+    els.openLobbyBtn.addEventListener('click', async () => {
+  if (selectedIds.length !== 5) {
+    els.openLobbyStatus.textContent = 'Choose exactly five cards before opening the lobby.';
+    els.openLobbyStatus.className = 'mt-4 text-sm text-warn';
+    return;
+  }
+
+  try {
+    const selectedCards = getSelectedCards();
+    await saveActiveDeckIdsToSupabase(selectedIds);
+    saveActiveDeck(selectedCards);
+
+    els.openLobbyStatus.textContent = 'Active deck saved. Go to Battle to check active lobbies.';
+    els.openLobbyStatus.className = 'mt-4 text-sm text-primary';
+  } catch (error) {
+    console.error(error);
+    els.openLobbyStatus.textContent = `Could not save active deck: ${error.message}`;
+    els.openLobbyStatus.className = 'mt-4 text-sm text-warn';
+  }
+});
+
+    els.battleNowBtn.addEventListener('click', async (event) => {
+  if (selectedIds.length !== 5) {
+    event.preventDefault();
+    els.selectionMessage.textContent = 'Choose exactly five cards before moving to Battle.';
+    els.selectionMessage.className = 'mt-4 text-sm text-warn';
+    return;
+  }
+
+  try {
+    const selectedCards = getSelectedCards();
+    await saveActiveDeckIdsToSupabase(selectedIds);
+    saveActiveDeck(selectedCards);
+  } catch (error) {
+    event.preventDefault();
+    console.error(error);
+    els.selectionMessage.textContent = `Could not prepare battle deck: ${error.message}`;
+    els.selectionMessage.className = 'mt-4 text-sm text-warn';
+  }
+});
+
+    async function initializeLobbyPage() {
+  try {
+    await loadCards();
+
+    const activeDeckIds = await loadActiveDeckIdsFromSupabase();
+
+    if (activeDeckIds.length) {
+      selectedIds = activeDeckIds
+        .filter(Boolean)
+        .filter(id => allCards.some(card => card.id === id))
+        .slice(0, 5);
+    } else {
+      const localActiveDeck = getActiveDeck();
+      if (localActiveDeck.length) {
+        selectedIds = localActiveDeck
+          .map(card => card.id)
+          .filter(Boolean)
+          .filter(id => allCards.some(card => card.id === id))
+          .slice(0, 5);
+      }
+    }
+
+    saveActiveDeck(getSelectedCards());
+    renderCards();
+    updateSelectionUI();
+  } catch (error) {
+    console.error(error);
+    els.cardGrid.innerHTML = `
+      <div class="col-span-full rounded-3xl bg-panel p-8 text-center shadow-soft ring-1 ring-line/60">
+        <div class="font-headline text-3xl font-bold italic text-warn">Could not load your cards</div>
+        <p class="mt-3 text-sm text-muted">Check your Supabase config or session.</p>
+      </div>`;
+    els.selectionMessage.textContent = 'Could not load your saved collection.';
+    els.selectionMessage.className = 'mt-4 text-sm text-warn';
+  }
+}
+
+initializeLobbyPage();
+
+    window.toggleCardSelection = toggleCardSelection;
+  </script>
+</body>
+</html>

@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Card Lab | Eco Battle</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,700;0,800;1,400;1,700;1,800&family=Manrope:wght@400;500;600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            bg: '#fdfae8',
+            panel: '#f1eedc',
+            panel2: '#f7f4e2',
+            card: '#fffdf5',
+            ink: '#1c1c11',
+            muted: '#5a6155',
+            line: '#c2c9bb',
+            primary: '#154212',
+            primaryDark: '#11330e',
+            blue: '#dceff8',
+            warn: '#ba1a1a'
+          },
+          fontFamily: {
+            headline: ['Newsreader', 'serif'],
+            body: ['Manrope', 'sans-serif']
+          },
+          boxShadow: {
+            soft: '0 18px 40px rgba(28,28,17,0.08)'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    body { background: #fdfae8; }
+    .range-input {
+      -webkit-appearance: none; appearance: none; width: 100%; height: 10px;
+      border-radius: 999px; background: #dddac9; outline: none;
+    }
+    .range-input::-webkit-slider-thumb {
+      -webkit-appearance: none; appearance: none; width: 18px; height: 18px; border-radius: 999px;
+      background: #154212; border: 2px solid #fffdf5; box-shadow: 0 2px 6px rgba(0,0,0,.18); cursor: pointer;
+    }
+    .range-input::-moz-range-thumb {
+      width: 18px; height: 18px; border-radius: 999px;
+      background: #154212; border: 2px solid #fffdf5; box-shadow: 0 2px 6px rgba(0,0,0,.18); cursor: pointer;
+    }
+    .stat-preview-active { background: #154212 !important; }
+    .stat-preview-label-active { color: rgba(255,255,255,.82) !important; }
+    .stat-preview-value-active { color: #ffffff !important; }
+    .sidebar-link-active { background: #154212; color: #ffffff; border-radius: 999px 0 0 999px; }
+    .sidebar-link-active .material-symbols-outlined { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+  </style>
+</head>
+<body class="font-body text-ink">
+  <aside class="fixed inset-y-0 left-0 z-40 hidden w-64 border-r border-line/50 bg-panel2 lg:flex lg:flex-col">
+    <div class="border-b border-line/40 px-6 py-6">
+      <a href="index.html" class="font-headline text-3xl font-extrabold italic text-primary">Eco Battle</a>
+      <p class="mt-1 text-[11px] font-extrabold uppercase tracking-[0.22em] text-muted">SHSID Biology</p>
+    </div>
+    <nav class="flex-1 px-3 py-6 text-sm font-bold text-muted">
+      <a href="index.html" class="mb-1 flex items-center gap-3 rounded-full px-4 py-3 hover:bg-panel"><span class="material-symbols-outlined">menu_book</span><span>Field Journal</span></a>
+      <a href="create.html" class="sidebar-link-active mb-1 flex items-center gap-3 px-4 py-3"><span class="material-symbols-outlined">biotech</span><span>Card Lab</span></a>
+      <a href="deck.html" class="mb-1 flex items-center gap-3 rounded-full px-4 py-3 hover:bg-panel"><span class="material-symbols-outlined">style</span><span>My Collection</span></a>
+      <a href="lobby.html" class="mb-1 flex items-center gap-3 rounded-full px-4 py-3 hover:bg-panel"><span class="material-symbols-outlined">swords</span><span>War Room</span></a>
+      <a href="battle.html" class="mb-1 flex items-center gap-3 rounded-full px-4 py-3 hover:bg-panel"><span class="material-symbols-outlined">sports_martial_arts</span><span>Battle</span></a>
+      <a href="battleground.html" class="mb-1 flex items-center gap-3 rounded-full px-4 py-3 hover:bg-panel"><span class="material-symbols-outlined">stadium</span><span>Battleground</span></a>
+    </nav>
+    <div class="border-t border-line/40 px-6 py-5 text-xs text-muted">
+      Create real organism cards. Build fair decks. Battle online later.
+    </div>
+  </aside>
+
+  <div class="min-h-screen lg:pl-64">
+    <header class="sticky top-0 z-30 flex items-center justify-between border-b-4 border-primary bg-bg px-5 py-4 lg:px-8">
+      <div>
+        <p class="text-[11px] font-extrabold uppercase tracking-[0.24em] text-primary">SHSID Eco Battle</p>
+        <h1 class="font-headline text-3xl font-extrabold italic text-primary sm:text-4xl">Card Lab</h1>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="deck.html" class="rounded-full bg-panel px-4 py-2 text-sm font-bold text-muted hover:bg-panel2">My Collection</a>
+        <a href="lobby.html" class="rounded-full bg-primary px-5 py-2 text-sm font-bold text-white hover:bg-primaryDark">War Room</a>
+      </div>
+    </header>
+
+    <main class="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-5 py-8 lg:grid-cols-[minmax(0,1.15fr)_420px] lg:px-8">
+      <section>
+        <div class="mb-6">
+          <p class="text-sm text-muted max-w-3xl">Create one real organism card at a time. Every stat runs from 0 to 200, but the five game stats together must stay at or below <span class="font-bold text-primary">500</span>. Duplicate common names and duplicate scientific names are blocked.</p>
+        </div>
+
+        <form id="card-form" class="space-y-6 rounded-3xl bg-panel p-6 shadow-soft ring-1 ring-line/60">
+          <section class="rounded-2xl bg-card p-5 ring-1 ring-line/60">
+            <h2 class="font-headline text-3xl font-bold italic text-primary">Taxonomy</h2>
+            <div class="mt-5 grid gap-5 md:grid-cols-2">
+              <label class="block"><span class="mb-2 block text-xs font-extrabold uppercase tracking-[0.18em] text-muted">Common Name</span><input id="common_name" name="common_name" required type="text" placeholder="e.g. Red-Crowned Crane" class="w-full rounded-xl border-line bg-bg px-4 py-3 text-sm"></label>
+              <label class="block"><span class="mb-2 block text-xs font-extrabold uppercase tracking-[0.18em] text-muted">Scientific Name</span><input id="scientific_name" name="scientific_name" required type="text" placeholder="e.g. Grus japonensis" class="w-full rounded-xl border-line bg-bg px-4 py-3 text-sm italic"></label>
+            </div>
+            <div class="mt-5 grid gap-5 md:grid-cols-3">
+              <label class="block"><span class="mb-2 block text-xs font-extrabold uppercase tracking-[0.18em] text-muted">Kingdom</span>
+                <select id="kingdom" name="kingdom" class="w-full rounded-xl border-line bg-bg px-4 py-3 text-sm">
+                  <option>Animalia</option><option>Plantae</option><option>Fungi</option><option>Protista</option><option>Archaea</option><option>Bacteria</option>
+                </select>
+              </label>
+              <label class="block"><span class="mb-2 block text-xs font-extrabold uppercase tracking-[0.18em] text-muted">Phylum</span><input id="phylum" name="phylum" type="text" placeholder="e.g. Chordata" class="w-full rounded-xl border-line bg-bg px-4 py-3 text-sm"></label>
+              <label class="block"><span class="mb-2 block text-xs font-extrabold uppercase tracking-[0.18em] text-muted">Class</span><input id="class_name" name="class_name" type="text" placeholder="e.g. Mammalia" class="w-full rounded-xl border-line bg-bg px-4 py-3 text-sm"></label>
+            </div>
+          </section>
+
+          <section class="rounded-2xl bg-card p-5 ring-1 ring-line/60">
+            <h2 class="font-headline text-3xl font-bold italic text-primary">Field Notes</h2>
+            <label class="mt-5 block"><span class="mb-2 block text-xs font-extrabold uppercase tracking-[0.18em] text-muted">Bio / Description</span><textarea id="bio" name="bio" rows="5" placeholder="Describe the organism, its traits, and why it matters." class="w-full rounded-xl border-line bg-bg px-4 py-3 text-sm"></textarea></label>
+            <div class="mt-5 grid gap-5 md:grid-cols-2">
+              <label class="block"><span class="mb-2 block text-xs font-extrabold uppercase tracking-[0.18em] text-muted">Habitat / Origin</span><input id="habitat" name="habitat" type="text" placeholder="e.g. Wetlands, coasts, forests" class="w-full rounded-xl border-line bg-bg px-4 py-3 text-sm"></label>
+              <label class="block"><span class="mb-2 block text-xs font-extrabold uppercase tracking-[0.18em] text-muted">Designed By</span><input id="designed_by" name="designed_by" type="text" placeholder="Student name" class="w-full rounded-xl border-line bg-bg px-4 py-3 text-sm"></label>
+            </div>
+            <label class="mt-5 block"><span class="mb-2 block text-xs font-extrabold uppercase tracking-[0.18em] text-muted">Fun Fact</span><textarea id="fun_fact" name="fun_fact" rows="3" placeholder="One short, memorable fact about this organism." class="w-full rounded-xl border-line bg-bg px-4 py-3 text-sm"></textarea></label>
+          </section>
+
+          <section class="rounded-2xl bg-card p-5 ring-1 ring-line/60">
+            <h2 class="font-headline text-3xl font-bold italic text-primary">Image</h2>
+            <div class="mt-5 grid gap-5 md:grid-cols-[1fr_auto]">
+              <label class="block"><span class="mb-2 block text-xs font-extrabold uppercase tracking-[0.18em] text-muted">Image URL</span><input id="image_url" name="image_url" type="url" placeholder="https://..." class="w-full rounded-xl border-line bg-bg px-4 py-3 text-sm"></label>
+              <label class="block"><span class="mb-2 block text-xs font-extrabold uppercase tracking-[0.18em] text-muted">Upload File</span><input id="image_file" name="image_file" type="file" accept="image/*" class="block w-full rounded-xl border-line bg-bg px-3 py-2 text-sm file:mr-4 file:rounded-full file:border-0 file:bg-primary file:px-4 file:py-2 file:text-sm file:font-bold file:text-white hover:file:bg-primaryDark"></label>
+            </div>
+            <p class="mt-3 text-sm text-muted">Local file preview overrides the URL until the page is refreshed. Broken or empty image sources fall back to a neutral placeholder.</p>
+          </section>
+
+          <section class="rounded-2xl bg-card p-5 ring-1 ring-line/60">
+            <div class="flex items-start justify-between gap-4">
+              <div>
+                <h2 class="font-headline text-3xl font-bold italic text-primary">Game Stats</h2>
+                <p class="mt-1 text-sm text-muted">Each stat is 0 to 200. Body Size can be 0 for microscopic organisms. Total budget must stay at or below 500.</p>
+              </div>
+              <div id="budget-warning" class="hidden rounded-full bg-red-100 px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-warn">Over budget</div>
+            </div>
+
+            <div class="mt-5 space-y-5">
+              <div>
+                <div class="mb-2 flex items-center justify-between"><span class="text-sm font-bold text-ink">Body Size</span><span id="body_size_value" class="text-sm font-extrabold text-primary">80</span></div>
+                <input id="body_size" name="body_size" class="range-input" type="range" min="0" max="200" value="80">
+                <div class="mt-2 grid grid-cols-6 items-end gap-1 text-center text-[10px] font-bold text-muted opacity-75">
+                  <div class="flex flex-col items-center"><svg viewBox="0 0 24 24" class="h-7 w-7" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="8" cy="10" r="3"/><path d="M11 10h7M14 7l4 3-4 3"/></svg><span>Microbe</span></div>
+                  <div class="flex flex-col items-center"><svg viewBox="0 0 24 24" class="h-7 w-7" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 12h12M8 8l-2 4 2 4M16 8l2 4-2 4"/><path d="M10 6l1 2M14 6l-1 2"/></svg><span>Insect</span></div>
+                  <div class="flex flex-col items-center"><svg viewBox="0 0 24 24" class="h-7 w-7" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 14c2-1 4-3 7-3h4l3 2v3h-2l-1 2h-2l-1-2H8l-1 2H5l-1-2Z"/></svg><span>Cheetah</span></div>
+                  <div class="flex flex-col items-center"><svg viewBox="0 0 24 24" class="h-7 w-7" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="6" r="2.5"/><path d="M12 9v6m-4 7 2-6h4l2 6m-7-8 3 2 3-2"/></svg><span>Human</span></div>
+                  <div class="flex flex-col items-center"><svg viewBox="0 0 24 24" class="h-7 w-7" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 13c2-4 8-6 13-4 2 1 4 3 5 5-2 1-4 1-6 1l-2 2H9l-2-2H4Z"/></svg><span>Whale</span></div>
+                  <div class="flex flex-col items-center"><svg viewBox="0 0 24 24" class="h-7 w-7" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3c4 2 6 5 6 8a6 6 0 0 1-12 0c0-3 2-6 6-8Z"/><path d="M12 11v10M8 21h8"/></svg><span>Tree</span></div>
+                </div>
+              </div>
+
+              <div><div class="mb-2 flex items-center justify-between"><span class="text-sm font-bold text-ink">Food Chain &amp; Energy</span><span id="food_chain_energy_value" class="text-sm font-extrabold text-primary">80</span></div><input id="food_chain_energy" name="food_chain_energy" class="range-input" type="range" min="0" max="200" value="80"></div>
+              <div><div class="mb-2 flex items-center justify-between"><span class="text-sm font-bold text-ink">Habitat Adaptability</span><span id="habitat_adaptability_value" class="text-sm font-extrabold text-primary">80</span></div><input id="habitat_adaptability" name="habitat_adaptability" class="range-input" type="range" min="0" max="200" value="80"></div>
+              <div><div class="mb-2 flex items-center justify-between"><span class="text-sm font-bold text-ink">Intelligence</span><span id="intelligence_value" class="text-sm font-extrabold text-primary">80</span></div><input id="intelligence" name="intelligence" class="range-input" type="range" min="0" max="200" value="80"></div>
+              <div><div class="mb-2 flex items-center justify-between"><span class="text-sm font-bold text-ink">Eco-Impact</span><span id="eco_impact_value" class="text-sm font-extrabold text-primary">80</span></div><input id="eco_impact" name="eco_impact" class="range-input" type="range" min="0" max="200" value="80"></div>
+            </div>
+
+            <div class="mt-6 flex flex-wrap items-center justify-between gap-4 rounded-2xl bg-panel2 px-4 py-4">
+              <div>
+                <div class="text-[10px] font-extrabold uppercase tracking-[0.18em] text-muted">Stat Budget</div>
+                <div class="mt-1 flex items-center gap-3 text-sm"><span id="point-total" class="font-extrabold text-primary">400</span><span class="text-muted">used</span><span id="point-remaining" class="font-extrabold text-primary">100</span><span class="text-muted">remaining</span></div>
+              </div>
+              <div class="flex items-center gap-3">
+                <button id="clear-form" type="button" class="rounded-full border border-line bg-bg px-5 py-3 text-sm font-extrabold uppercase tracking-[0.18em] text-muted hover:bg-panel">Clear Form</button>
+                <button id="save-card" type="submit" class="rounded-full bg-primary px-6 py-3 text-sm font-extrabold uppercase tracking-[0.18em] text-white hover:bg-primaryDark">Save Card</button>
+              </div>
+            </div>
+            <p id="save-status" class="mt-4 text-sm text-muted"></p>
+          </section>
+        </form>
+      </section>
+
+      <aside class="lg:sticky lg:top-24 h-fit">
+        <div class="rounded-[28px] border-[5px] border-primary bg-card p-5 shadow-soft">
+          <div class="mb-4 flex items-start justify-between gap-4">
+            <div>
+              <div id="preview_common_name" class="font-headline text-3xl font-bold italic leading-none text-primary">Unnamed Organism</div>
+              <div id="preview_scientific_name" class="mt-1 text-xs italic text-muted">Scientific name</div>
+            </div>
+            <div id="preview_class_badge" class="rounded-full bg-panel px-3 py-1 text-[10px] font-extrabold uppercase tracking-[0.18em] text-primary">Class</div>
+          </div>
+          <div class="overflow-hidden rounded-2xl border border-line/60 bg-panel2">
+            <img id="preview_image" src="" alt="Card image preview" class="h-72 w-full object-cover">
+          </div>
+          <div class="mt-4 grid grid-cols-2 gap-3 text-sm">
+            <div id="preview_card_body_size" class="rounded-xl bg-panel px-3 py-3 transition-colors"><div id="preview_label_body_size" class="text-[10px] font-extrabold uppercase tracking-[0.16em] text-muted">Body Size</div><div id="preview_body_size" class="mt-1 text-2xl font-extrabold text-primary">80</div></div>
+            <div id="preview_card_food_chain_energy" class="rounded-xl bg-panel px-3 py-3 transition-colors"><div id="preview_label_food_chain_energy" class="text-[10px] font-extrabold uppercase tracking-[0.16em] text-muted">Food Chain &amp; Energy</div><div id="preview_food_chain_energy" class="mt-1 text-2xl font-extrabold text-primary">80</div></div>
+            <div id="preview_card_habitat_adaptability" class="rounded-xl bg-panel px-3 py-3 transition-colors"><div id="preview_label_habitat_adaptability" class="text-[10px] font-extrabold uppercase tracking-[0.16em] text-muted">Habitat Adaptability</div><div id="preview_habitat_adaptability" class="mt-1 text-2xl font-extrabold text-primary">80</div></div>
+            <div id="preview_card_intelligence" class="rounded-xl bg-panel px-3 py-3 transition-colors"><div id="preview_label_intelligence" class="text-[10px] font-extrabold uppercase tracking-[0.16em] text-muted">Intelligence</div><div id="preview_intelligence" class="mt-1 text-2xl font-extrabold text-primary">80</div></div>
+            <div id="preview_card_eco_impact" class="col-span-2 rounded-xl bg-panel px-4 py-3 transition-colors"><div id="preview_label_eco_impact" class="text-[10px] font-extrabold uppercase tracking-[0.16em] text-muted">Eco-Impact</div><div id="preview_eco_impact" class="mt-1 text-2xl font-extrabold text-primary">80</div></div>
+          </div>
+
+          <div class="mt-5 grid gap-3 sm:grid-cols-2">
+            <div class="rounded-xl bg-panel2 px-4 py-3"><div class="text-[10px] font-extrabold uppercase tracking-[0.16em] text-muted">Kingdom</div><div id="preview_kingdom" class="mt-1 text-sm font-bold text-ink">Animalia</div></div>
+            <div class="rounded-xl bg-panel2 px-4 py-3"><div class="text-[10px] font-extrabold uppercase tracking-[0.16em] text-muted">Phylum</div><div id="preview_phylum" class="mt-1 text-sm font-bold text-ink">—</div></div>
+            <div class="rounded-xl bg-panel2 px-4 py-3"><div class="text-[10px] font-extrabold uppercase tracking-[0.16em] text-muted">Class</div><div id="preview_class_name" class="mt-1 text-sm font-bold text-ink">—</div></div>
+            <div class="rounded-xl bg-panel2 px-4 py-3"><div class="text-[10px] font-extrabold uppercase tracking-[0.16em] text-muted">Habitat / Origin</div><div id="preview_habitat" class="mt-1 text-sm font-bold text-ink">—</div></div>
+          </div>
+
+          <div class="mt-5 rounded-2xl bg-panel2 p-4"><div class="text-[10px] font-extrabold uppercase tracking-[0.16em] text-muted">Bio</div><p id="preview_bio" class="mt-2 text-sm leading-relaxed text-ink">Add a short description for this organism.</p></div>
+          <div class="mt-4 rounded-2xl bg-panel2 p-4"><div class="text-[10px] font-extrabold uppercase tracking-[0.16em] text-muted">Fun Fact</div><p id="preview_fun_fact" class="mt-2 text-sm leading-relaxed text-ink">Add one memorable fact.</p></div>
+          <div class="mt-4 flex items-center justify-between border-t border-line/50 pt-4 text-xs text-muted"><span id="preview_designed_by">Designed by —</span><span class="font-extrabold uppercase tracking-[0.16em] text-primary">Eco Battle</span></div>
+        </div>
+      </aside>
+    </main>
+  </div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+  <script>
+    const MAX_POINTS = 500;
+let currentSession = null;
+const client = window.ecoBattle?.client;
+
+async function requireSessionOrRedirect() {
+  if (!window.ecoBattle || !client) {
+    alert('Supabase config not loaded. Check js/config.js.');
+    return null;
+  }
+
+  const session = await window.ecoBattle.getSession();
+  if (!session) {
+    window.location.href = 'login.html';
+    return null;
+  }
+
+  currentSession = session;
+  return session;
+}
+
+async function getUserCards() {
+  const { data, error } = await client
+    .from('cards')
+    .select('id, common_name, scientific_name')
+    .eq('user_id', currentSession.user.id);
+
+  if (error) throw error;
+  return data || [];
+}
+
+async function insertCard(card) {
+  const { error } = await client.from('cards').insert([{
+    user_id: currentSession.user.id,
+    common_name: card.common_name,
+    scientific_name: card.scientific_name,
+    kingdom: card.kingdom,
+    phylum: card.phylum,
+    class_name: card.class_name,
+    bio: card.bio,
+    habitat: card.habitat,
+    fun_fact: card.fun_fact,
+    designed_by: card.designed_by,
+    image_url: card.image_url,
+    body_size: card.body_size,
+    food_chain_energy: card.food_chain_energy,
+    habitat_adaptability: card.habitat_adaptability,
+    intelligence: card.intelligence,
+    eco_impact: card.eco_impact,
+    total_points: card.total_points
+  }]);
+
+  if (error) throw error;
+}
+
+requireSessionOrRedirect();
+    const DEFAULT_PREVIEW_IMAGE = "data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20800%20600%27%3E%3Crect%20width%3D%27800%27%20height%3D%27600%27%20fill%3D%27%23efe9d7%27/%3E%3Crect%20x%3D%2724%27%20y%3D%2724%27%20width%3D%27752%27%20height%3D%27552%27%20rx%3D%2728%27%20ry%3D%2728%27%20fill%3D%27%23fbf8ee%27%20stroke%3D%27%23d7d3c2%27%20stroke-width%3D%274%27%20stroke-dasharray%3D%2710%2010%27/%3E%3Ccircle%20cx%3D%27400%27%20cy%3D%27230%27%20r%3D%2770%27%20fill%3D%27%231b5e20%27%20opacity%3D%270.12%27/%3E%3Cpath%20d%3D%27M330%20360h140%27%20stroke%3D%27%231b5e20%27%20stroke-width%3D%2718%27%20stroke-linecap%3D%27round%27%20opacity%3D%270.5%27/%3E%3Cpath%20d%3D%27M355%20225l35%2035%2055-65%27%20fill%3D%27none%27%20stroke%3D%27%231b5e20%27%20stroke-width%3D%2718%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%20opacity%3D%270.7%27/%3E%3Ctext%20x%3D%27400%27%20y%3D%27485%27%20text-anchor%3D%27middle%27%20font-family%3D%27Arial%2C%20sans-serif%27%20font-size%3D%2734%27%20fill%3D%27%2366705d%27%3ENo%20image%20selected%3C/text%3E%3C/svg%3E";
+
+    const defaults = {
+      common_name: '', scientific_name: '', kingdom: 'Animalia', phylum: '', class_name: '', bio: '', habitat: '', fun_fact: '', designed_by: '', image_url: '',
+      body_size: 80, food_chain_energy: 80, habitat_adaptability: 80, intelligence: 80, eco_impact: 80
+    };
+
+    let uploadedImageData = null;
+
+    const form = document.getElementById('card-form');
+    const saveStatusEl = document.getElementById('save-status');
+    const budgetWarningEl = document.getElementById('budget-warning');
+    const pointTotalEl = document.getElementById('point-total');
+    const pointRemainingEl = document.getElementById('point-remaining');
+    const saveButton = document.getElementById('save-card');
+    const clearButton = document.getElementById('clear-form');
+
+    const fields = {
+      common_name: document.getElementById('common_name'), scientific_name: document.getElementById('scientific_name'), kingdom: document.getElementById('kingdom'), phylum: document.getElementById('phylum'), class_name: document.getElementById('class_name'),
+      bio: document.getElementById('bio'), habitat: document.getElementById('habitat'), fun_fact: document.getElementById('fun_fact'), designed_by: document.getElementById('designed_by'), image_url: document.getElementById('image_url'), image_file: document.getElementById('image_file'),
+      body_size: document.getElementById('body_size'), food_chain_energy: document.getElementById('food_chain_energy'), habitat_adaptability: document.getElementById('habitat_adaptability'), intelligence: document.getElementById('intelligence'), eco_impact: document.getElementById('eco_impact')
+    };
+
+    const valueLabels = {
+      body_size: document.getElementById('body_size_value'),
+      food_chain_energy: document.getElementById('food_chain_energy_value'),
+      habitat_adaptability: document.getElementById('habitat_adaptability_value'),
+      intelligence: document.getElementById('intelligence_value'),
+      eco_impact: document.getElementById('eco_impact_value')
+    };
+
+    const preview = {
+      common_name: document.getElementById('preview_common_name'),
+      scientific_name: document.getElementById('preview_scientific_name'),
+      kingdom: document.getElementById('preview_kingdom'),
+      phylum: document.getElementById('preview_phylum'),
+      class_name: document.getElementById('preview_class_name'),
+      class_badge: document.getElementById('preview_class_badge'),
+      bio: document.getElementById('preview_bio'),
+      habitat: document.getElementById('preview_habitat'),
+      fun_fact: document.getElementById('preview_fun_fact'),
+      designed_by: document.getElementById('preview_designed_by'),
+      image: document.getElementById('preview_image'),
+      body_size: document.getElementById('preview_body_size'),
+      food_chain_energy: document.getElementById('preview_food_chain_energy'),
+      habitat_adaptability: document.getElementById('preview_habitat_adaptability'),
+      intelligence: document.getElementById('preview_intelligence'),
+      eco_impact: document.getElementById('preview_eco_impact')
+    };
+
+    const previewCards = {
+      body_size: document.getElementById('preview_card_body_size'),
+      food_chain_energy: document.getElementById('preview_card_food_chain_energy'),
+      habitat_adaptability: document.getElementById('preview_card_habitat_adaptability'),
+      intelligence: document.getElementById('preview_card_intelligence'),
+      eco_impact: document.getElementById('preview_card_eco_impact')
+    };
+
+    const previewLabelsMap = {
+      body_size: document.getElementById('preview_label_body_size'),
+      food_chain_energy: document.getElementById('preview_label_food_chain_energy'),
+      habitat_adaptability: document.getElementById('preview_label_habitat_adaptability'),
+      intelligence: document.getElementById('preview_label_intelligence'),
+      eco_impact: document.getElementById('preview_label_eco_impact')
+    };
+
+    function getPointTotal() {
+      return ['body_size','food_chain_energy','habitat_adaptability','intelligence','eco_impact']
+        .reduce((sum, key) => sum + Number(fields[key].value || 0), 0);
+    }
+
+    function updateBudget() {
+      const total = getPointTotal();
+      const remaining = MAX_POINTS - total;
+      pointTotalEl.textContent = total;
+      pointRemainingEl.textContent = remaining;
+      pointRemainingEl.className = `font-extrabold ${remaining < 0 ? 'text-warn' : 'text-primary'}`;
+      pointTotalEl.className = `font-extrabold ${total > MAX_POINTS ? 'text-warn' : 'text-primary'}`;
+      budgetWarningEl.classList.toggle('hidden', total <= MAX_POINTS);
+      saveButton.disabled = total > MAX_POINTS;
+      saveButton.classList.toggle('opacity-50', total > MAX_POINTS);
+      saveButton.classList.toggle('cursor-not-allowed', total > MAX_POINTS);
+    }
+
+    function highlightHighestStat() {
+      const stats = {
+        body_size: Number(fields.body_size.value),
+        food_chain_energy: Number(fields.food_chain_energy.value),
+        habitat_adaptability: Number(fields.habitat_adaptability.value),
+        intelligence: Number(fields.intelligence.value),
+        eco_impact: Number(fields.eco_impact.value)
+      };
+      const highestValue = Math.max(...Object.values(stats));
+      Object.keys(stats).forEach((key) => {
+        previewCards[key].classList.remove('stat-preview-active');
+        previewLabelsMap[key].classList.remove('stat-preview-label-active');
+        preview[key].classList.remove('stat-preview-value-active');
+        if (stats[key] === highestValue) {
+          previewCards[key].classList.add('stat-preview-active');
+          previewLabelsMap[key].classList.add('stat-preview-label-active');
+          preview[key].classList.add('stat-preview-value-active');
+        }
+      });
+    }
+
+    function updatePreview() {
+      preview.common_name.textContent = fields.common_name.value.trim() || 'Unnamed Organism';
+      preview.scientific_name.textContent = fields.scientific_name.value.trim() || 'Scientific name';
+      preview.kingdom.textContent = fields.kingdom.value || '—';
+      preview.phylum.textContent = fields.phylum.value.trim() || '—';
+      preview.class_name.textContent = fields.class_name.value.trim() || '—';
+      preview.class_badge.textContent = fields.class_name.value.trim() || 'Class';
+      preview.bio.textContent = fields.bio.value.trim() || 'Add a short description for this organism.';
+      preview.habitat.textContent = fields.habitat.value.trim() || '—';
+      preview.fun_fact.textContent = fields.fun_fact.value.trim() || 'Add one memorable fact.';
+      preview.designed_by.textContent = `Designed by ${fields.designed_by.value.trim() || '—'}`;
+
+      Object.keys(valueLabels).forEach((key) => {
+        valueLabels[key].textContent = fields[key].value;
+        preview[key].textContent = fields[key].value;
+      });
+
+      if (uploadedImageData) {
+        preview.image.src = uploadedImageData;
+      } else if (fields.image_url.value.trim()) {
+        preview.image.src = fields.image_url.value.trim();
+      } else {
+        preview.image.src = DEFAULT_PREVIEW_IMAGE;
+      }
+
+      updateBudget();
+      highlightHighestStat();
+    }
+
+    function normalizeName(value) {
+      return (value || '').trim().toLowerCase().replace(/\s+/g, ' ');
+    }
+
+    function isDuplicateCard(newCard, existingCards) {
+      const newCommon = normalizeName(newCard.common_name);
+      const newScientific = normalizeName(newCard.scientific_name);
+      return existingCards.some((card) => {
+        const existingCommon = normalizeName(card.common_name);
+        const existingScientific = normalizeName(card.scientific_name);
+        return (newCommon && existingCommon && newCommon === existingCommon) || (newScientific && existingScientific && newScientific === existingScientific);
+      });
+    }
+
+    function resetFormToDefaults() {
+      form.reset();
+      uploadedImageData = null;
+      Object.entries(defaults).forEach(([key, value]) => {
+        if (fields[key]) fields[key].value = value;
+      });
+      preview.image.src = DEFAULT_PREVIEW_IMAGE;
+      updatePreview();
+    }
+
+    fields.image_file.addEventListener('change', (event) => {
+      const [file] = event.target.files || [];
+      if (!file) { uploadedImageData = null; updatePreview(); return; }
+      const reader = new FileReader();
+      reader.onload = () => { uploadedImageData = reader.result; updatePreview(); };
+      reader.readAsDataURL(file);
+    });
+
+    preview.image.addEventListener('error', () => {
+      preview.image.src = DEFAULT_PREVIEW_IMAGE;
+    });
+
+    Object.values(fields).forEach((field) => {
+      if (field.type === 'file') return;
+      field.addEventListener('input', updatePreview);
+      field.addEventListener('change', updatePreview);
+    });
+
+    clearButton.addEventListener('click', () => {
+      saveStatusEl.textContent = '';
+      resetFormToDefaults();
+    });
+
+    form.addEventListener('submit', async (event) => {
+  event.preventDefault();
+
+  const session = currentSession || await requireSessionOrRedirect();
+  if (!session) return;
+
+  const total = getPointTotal();
+  if (total > MAX_POINTS) {
+    saveStatusEl.textContent = 'Card not saved. The stat total is above 500.';
+    saveStatusEl.className = 'mt-4 text-sm text-warn';
+    return;
+  }
+
+  const commonName = fields.common_name.value.trim();
+  const scientificName = fields.scientific_name.value.trim();
+
+  if (!commonName || !scientificName) {
+    saveStatusEl.textContent = 'Common name and scientific name are required.';
+    saveStatusEl.className = 'mt-4 text-sm text-warn';
+    return;
+  }
+
+  const card = {
+    id: crypto.randomUUID(),
+    common_name: commonName,
+    scientific_name: scientificName,
+    kingdom: fields.kingdom.value,
+    phylum: fields.phylum.value.trim(),
+    class_name: fields.class_name.value.trim(),
+    bio: fields.bio.value.trim(),
+    habitat: fields.habitat.value.trim(),
+    fun_fact: fields.fun_fact.value.trim(),
+    designed_by: fields.designed_by.value.trim(),
+    image_url: uploadedImageData || fields.image_url.value.trim(),
+    body_size: Number(fields.body_size.value),
+    food_chain_energy: Number(fields.food_chain_energy.value),
+    habitat_adaptability: Number(fields.habitat_adaptability.value),
+    intelligence: Number(fields.intelligence.value),
+    eco_impact: Number(fields.eco_impact.value),
+    total_points: total,
+    created_at: new Date().toISOString()
+  };
+
+  try {
+  saveButton.disabled = true;
+  saveButton.classList.add('opacity-50', 'cursor-not-allowed');
+
+  const existingCards = await getUserCards();
+
+  if (isDuplicateCard(card, existingCards)) {
+    saveStatusEl.textContent = 'Duplicate card blocked. Use a different organism name.';
+    saveStatusEl.className = 'mt-4 text-sm text-warn';
+    return;
+  }
+
+  await insertCard(card);
+
+  saveStatusEl.textContent = `Saved to your account. Total cards: ${existingCards.length + 1}.`;
+  saveStatusEl.className = 'mt-4 text-sm text-primary';
+
+  resetFormToDefaults();
+} catch (error) {
+  console.error(error);
+
+  if (error.message && error.message.toLowerCase().includes('duplicate')) {
+    saveStatusEl.textContent = 'Duplicate card blocked. Use a different organism name.';
+  } else {
+    saveStatusEl.textContent = `Save failed: ${error.message}`;
+  }
+
+  saveStatusEl.className = 'mt-4 text-sm text-warn';
+} finally {
+  saveButton.disabled = false;
+  saveButton.classList.remove('opacity-50', 'cursor-not-allowed');
+}
+});
+
+    resetFormToDefaults();
+  </script>
+</body>
+</html>

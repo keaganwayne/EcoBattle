@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>My Collection | Eco Battle</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,700;0,800;1,400;1,700;1,800&family=Manrope:wght@400;500;600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: { bg:'#fdfae8', panel:'#f1eedc', panel2:'#f7f4e2', card:'#fffdf5', ink:'#1c1c11', muted:'#5a6155', line:'#c2c9bb', primary:'#154212', primaryDark:'#11330e', warn:'#ba1a1a' },
+          fontFamily: { headline:['Newsreader','serif'], body:['Manrope','sans-serif'] },
+          boxShadow: { soft:'0 18px 40px rgba(28,28,17,0.08)' }
+        }
+      }
+    }
+  </script>
+  <style>
+    .material-symbols-outlined { font-variation-settings:'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    body { background:#fdfae8; }
+    .sidebar-link-active { background: #154212; color: #ffffff; border-radius: 999px 0 0 999px; }
+    .sidebar-link-active .material-symbols-outlined { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+  </style>
+</head>
+<body class="font-body text-ink">
+  <aside class="fixed inset-y-0 left-0 z-40 hidden w-64 border-r border-line/50 bg-panel2 lg:flex lg:flex-col">
+    <div class="border-b border-line/40 px-6 py-6">
+      <a href="index.html" class="font-headline text-3xl font-extrabold italic text-primary">Eco Battle</a>
+      <p class="mt-1 text-[11px] font-extrabold uppercase tracking-[0.22em] text-muted">SHSID Biology</p>
+    </div>
+    <nav class="flex-1 px-3 py-6 text-sm font-bold text-muted">
+      <a href="index.html" class="mb-1 flex items-center gap-3 rounded-full px-4 py-3 hover:bg-panel"><span class="material-symbols-outlined">menu_book</span><span>Field Journal</span></a>
+      <a href="create.html" class="mb-1 flex items-center gap-3 rounded-full px-4 py-3 hover:bg-panel"><span class="material-symbols-outlined">biotech</span><span>Card Lab</span></a>
+      <a href="deck.html" class="sidebar-link-active mb-1 flex items-center gap-3 px-4 py-3"><span class="material-symbols-outlined">style</span><span>My Collection</span></a>
+      <a href="lobby.html" class="mb-1 flex items-center gap-3 rounded-full px-4 py-3 hover:bg-panel"><span class="material-symbols-outlined">swords</span><span>War Room</span></a>
+      <a href="battle.html" class="mb-1 flex items-center gap-3 rounded-full px-4 py-3 hover:bg-panel"><span class="material-symbols-outlined">sports_martial_arts</span><span>Battle</span></a>
+      <a href="battleground.html" class="mb-1 flex items-center gap-3 rounded-full px-4 py-3 hover:bg-panel"><span class="material-symbols-outlined">stadium</span><span>Battleground</span></a>
+    </nav>
+    <div class="border-t border-line/40 px-6 py-5 text-xs text-muted">Browse, search, and manage the cards saved to your Eco Battle account.</div>
+  </aside>
+
+  <div class="min-h-screen lg:pl-64">
+    <header class="sticky top-0 z-30 flex items-center justify-between border-b-4 border-primary bg-bg px-5 py-4 lg:px-8">
+      <div>
+        <p class="text-[11px] font-extrabold uppercase tracking-[0.24em] text-primary">SHSID Eco Battle</p>
+        <h1 class="font-headline text-3xl font-extrabold italic text-primary sm:text-4xl">My Collection</h1>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="create.html" class="rounded-full bg-panel px-4 py-2 text-sm font-bold text-muted hover:bg-panel2">New Card</a>
+        <a href="lobby.html" class="rounded-full bg-primary px-5 py-2 text-sm font-bold text-white hover:bg-primaryDark">War Room</a>
+      </div>
+    </header>
+
+    <main class="mx-auto max-w-7xl px-5 py-8 lg:px-8">
+      <section class="mb-6 grid gap-4 xl:grid-cols-[minmax(0,1fr)_290px]">
+        <div class="rounded-3xl bg-panel p-5 shadow-soft ring-1 ring-line/60">
+          <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+            <div>
+              <p class="text-sm text-muted max-w-3xl">These cards are loaded from your signed-in Eco Battle account.. Open a card to inspect details. Opening one does not close the others.</p>
+            </div>
+            <div class="grid gap-3 sm:grid-cols-3">
+              <label class="block"><span class="mb-1 block text-[11px] font-extrabold uppercase tracking-[0.18em] text-muted">Search</span><input id="searchInput" type="search" placeholder="Common or scientific name" class="w-full rounded-xl border-line bg-card px-4 py-3 text-sm"></label>
+              <label class="block"><span class="mb-1 block text-[11px] font-extrabold uppercase tracking-[0.18em] text-muted">Kingdom</span><select id="kingdomFilter" class="w-full rounded-xl border-line bg-card px-4 py-3 text-sm"><option value="all">All Kingdoms</option></select></label>
+              <label class="block"><span class="mb-1 block text-[11px] font-extrabold uppercase tracking-[0.18em] text-muted">Sort</span><select id="sortSelect" class="w-full rounded-xl border-line bg-card px-4 py-3 text-sm"><option value="newest">Newest</option><option value="oldest">Oldest</option><option value="common_az">Common Name A-Z</option><option value="common_za">Common Name Z-A</option><option value="highest_total">Highest Total Points</option></select></label>
+            </div>
+          </div>
+        </div>
+
+        <div class="rounded-3xl bg-panel2 p-5 shadow-soft ring-1 ring-line/60">
+          <div class="text-[11px] font-extrabold uppercase tracking-[0.18em] text-muted">Starter Deck Progress</div>
+          <div id="starterDeckCount" class="mt-2 font-headline text-4xl font-bold text-primary">0 / 5</div>
+          <div class="mt-3 h-3 overflow-hidden rounded-full bg-card"><div id="starterDeckBar" class="h-full rounded-full bg-primary" style="width:0%"></div></div>
+          <p id="starterDeckMessage" class="mt-3 text-sm text-muted">Create at least 5 cards to unlock battle preparation.</p>
+          <div class="mt-4 flex flex-wrap gap-3">
+            <a href="create.html" class="rounded-full bg-primary px-4 py-2 text-sm font-bold text-white hover:bg-primaryDark">Create Card</a>
+            <a id="battlePrepLink" href="lobby.html" class="rounded-full bg-card px-4 py-2 text-sm font-bold text-muted ring-1 ring-line/60 hover:bg-panel">Prepare Deck</a>
+          </div>
+          <button id="clearAllBtn" type="button" class="mt-5 rounded-full border border-line bg-bg px-4 py-2 text-sm font-bold text-muted hover:bg-panel">Clear All Saved Cards</button>
+        </div>
+      </section>
+
+      <section id="resultsWrapper" class="min-h-[60vh]">
+        <div id="resultsSummary" class="mb-4 text-sm text-muted"></div>
+        <div id="cardGrid" class="grid gap-6 md:grid-cols-2 2xl:grid-cols-3"></div>
+      </section>
+    </main>
+  </div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+  <script>
+    let currentSession = null;
+    const client = window.ecoBattle?.client;
+    const DEFAULT_PREVIEW_IMAGE = "data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20800%20600%27%3E%3Crect%20width%3D%27800%27%20height%3D%27600%27%20fill%3D%27%23efe9d7%27/%3E%3Crect%20x%3D%2724%27%20y%3D%2724%27%20width%3D%27752%27%20height%3D%27552%27%20rx%3D%2728%27%20ry%3D%2728%27%20fill%3D%27%23fbf8ee%27%20stroke%3D%27%23d7d3c2%27%20stroke-width%3D%274%27%20stroke-dasharray%3D%2710%2010%27/%3E%3Ccircle%20cx%3D%27400%27%20cy%3D%27230%27%20r%3D%2770%27%20fill%3D%27%231b5e20%27%20opacity%3D%270.12%27/%3E%3Cpath%20d%3D%27M330%20360h140%27%20stroke%3D%27%231b5e20%27%20stroke-width%3D%2718%27%20stroke-linecap%3D%27round%27%20opacity%3D%270.5%27/%3E%3Cpath%20d%3D%27M355%20225l35%2035%2055-65%27%20fill%3D%27none%27%20stroke%3D%27%231b5e20%27%20stroke-width%3D%2718%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%20opacity%3D%270.7%27/%3E%3Ctext%20x%3D%27400%27%20y%3D%27485%27%20text-anchor%3D%27middle%27%20font-family%3D%27Arial%2C%20sans-serif%27%20font-size%3D%2734%27%20fill%3D%27%2366705d%27%3ENo%20image%20selected%3C/text%3E%3C/svg%3E";
+
+    const els = {
+      searchInput: document.getElementById('searchInput'),
+      kingdomFilter: document.getElementById('kingdomFilter'),
+      sortSelect: document.getElementById('sortSelect'),
+      starterDeckCount: document.getElementById('starterDeckCount'),
+      starterDeckBar: document.getElementById('starterDeckBar'),
+      starterDeckMessage: document.getElementById('starterDeckMessage'),
+      battlePrepLink: document.getElementById('battlePrepLink'),
+      cardGrid: document.getElementById('cardGrid'),
+      resultsSummary: document.getElementById('resultsSummary'),
+      clearAllBtn: document.getElementById('clearAllBtn')
+    };
+
+   async function requireSessionOrRedirect() {
+  if (!window.ecoBattle || !client) {
+    alert('Supabase config not loaded. Check js/config.js.');
+    return null;
+  }
+
+  const session = await window.ecoBattle.getSession();
+  if (!session) {
+    window.location.href = 'login.html';
+    return null;
+  }
+
+  currentSession = session;
+  return session;
+}
+
+async function getCards() {
+  const session = currentSession || await requireSessionOrRedirect();
+  if (!session) return [];
+
+  const { data, error } = await client
+    .from('cards')
+    .select('*')
+    .eq('user_id', session.user.id);
+
+  if (error) throw error;
+  return data || [];
+}
+
+async function deleteCard(cardId) {
+  const session = currentSession || await requireSessionOrRedirect();
+  if (!session) return;
+
+  const { error } = await client
+    .from('cards')
+    .delete()
+    .eq('id', cardId)
+    .eq('user_id', session.user.id);
+
+  if (error) {
+    alert(`Delete failed: ${error.message}`);
+    return;
+  }
+
+  await initializeDeckPage();
+}
+
+async function clearAllCards() {
+  const session = currentSession || await requireSessionOrRedirect();
+  if (!session) return;
+
+  const { error } = await client
+    .from('cards')
+    .delete()
+    .eq('user_id', session.user.id);
+
+  if (error) {
+    alert(`Clear failed: ${error.message}`);
+    return;
+  }
+
+  await initializeDeckPage();
+}
+
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function buildKingdomFilter(cards) {
+      const kingdoms = [...new Set(cards.map(card => card.kingdom).filter(Boolean))].sort();
+      els.kingdomFilter.innerHTML = '<option value="all">All Kingdoms</option>' + kingdoms.map(k => `<option value="${escapeHtml(k)}">${escapeHtml(k)}</option>`).join('');
+    }
+
+    function getHighestStatKeys(card) {
+      const stats = {
+        body_size: Number(card.body_size || 0),
+        food_chain_energy: Number(card.food_chain_energy || 0),
+        habitat_adaptability: Number(card.habitat_adaptability || 0),
+        intelligence: Number(card.intelligence || 0),
+        eco_impact: Number(card.eco_impact || 0)
+      };
+      const highest = Math.max(...Object.values(stats));
+      return Object.keys(stats).filter(key => stats[key] === highest);
+    }
+
+    function statChip(label, value, active) {
+      return `<div class="rounded-xl px-3 py-3 ${active ? 'bg-primary text-white' : 'bg-panel2 text-ink'}"><div class="text-[10px] font-extrabold uppercase tracking-[0.16em] ${active ? 'text-white/80' : 'text-muted'}">${label}</div><div class="mt-1 text-xl font-extrabold ${active ? 'text-white' : 'text-primary'}">${value}</div></div>`;
+    }
+
+    async function renderCards() {
+      const cards = await getCards();
+      const search = els.searchInput.value.trim().toLowerCase();
+      const kingdom = els.kingdomFilter.value;
+      const sort = els.sortSelect.value;
+
+      let filtered = cards.filter(card => {
+        const matchesSearch = !search || [card.common_name, card.scientific_name].some(v => String(v || '').toLowerCase().includes(search));
+        const matchesKingdom = kingdom === 'all' || (card.kingdom || '') === kingdom;
+        return matchesSearch && matchesKingdom;
+      });
+
+      filtered.sort((a, b) => {
+        if (sort === 'oldest') return new Date(a.created_at || 0) - new Date(b.created_at || 0);
+        if (sort === 'common_az') return String(a.common_name || '').localeCompare(String(b.common_name || ''));
+        if (sort === 'common_za') return String(b.common_name || '').localeCompare(String(a.common_name || ''));
+        if (sort === 'highest_total') return Number(b.total_points || 0) - Number(a.total_points || 0);
+        return new Date(b.created_at || 0) - new Date(a.created_at || 0);
+      });
+
+      els.resultsSummary.textContent = `${filtered.length} card${filtered.length === 1 ? '' : 's'} shown`;
+
+      if (!filtered.length) {
+        els.cardGrid.innerHTML = `
+          <div class="col-span-full rounded-3xl bg-panel p-8 text-center shadow-soft ring-1 ring-line/60">
+            <div class="font-headline text-3xl font-bold italic text-primary">No matching cards</div>
+            <p class="mt-3 text-sm text-muted">Adjust the search or filters, or create a new organism card.</p>
+            <a href="create.html" class="mt-5 inline-flex rounded-full bg-primary px-5 py-3 text-sm font-bold text-white hover:bg-primaryDark">Create Card</a>
+          </div>`;
+        updateStarterDeck(cards.length);
+        return;
+      }
+
+      els.cardGrid.innerHTML = filtered.map(card => {
+        const highestKeys = getHighestStatKeys(card);
+        const detailId = `details-${card.id}`;
+        const title = escapeHtml(card.common_name || card.scientific_name || 'Unnamed Card');
+        const sci = escapeHtml(card.scientific_name || '—');
+        const bio = escapeHtml(card.bio || 'No bio added yet.');
+        const habitat = escapeHtml(card.habitat || '—');
+        const funFact = escapeHtml(card.fun_fact || '—');
+        const designedBy = escapeHtml(card.designed_by || '—');
+        const kingdomText = escapeHtml(card.kingdom || '—');
+        const phylumText = escapeHtml(card.phylum || '—');
+        const classText = escapeHtml(card.class_name || '—');
+        return `
+        <article class="rounded-3xl bg-card p-5 shadow-soft ring-1 ring-line/60">
+          <div class="overflow-hidden rounded-2xl border border-line/60 bg-panel2">
+            <img src="${escapeHtml(card.image_url || DEFAULT_PREVIEW_IMAGE)}" alt="${title}" class="h-56 w-full object-cover" onerror="this.src='${DEFAULT_PREVIEW_IMAGE}'">
+          </div>
+          <div class="mt-4 flex items-start justify-between gap-4">
+            <div>
+              <h2 class="font-headline text-3xl font-bold italic leading-none text-primary">${title}</h2>
+              <p class="mt-1 text-xs italic text-muted">${sci}</p>
+            </div>
+            <div class="rounded-full bg-panel px-3 py-1 text-[10px] font-extrabold uppercase tracking-[0.16em] text-primary">${classText}</div>
+          </div>
+          <div class="mt-4 flex flex-wrap gap-2 text-xs text-muted">
+            <span class="rounded-full bg-panel2 px-3 py-1">${kingdomText}</span>
+            <span class="rounded-full bg-panel2 px-3 py-1">Total ${Number(card.total_points || 0)}</span>
+          </div>
+          <div class="mt-4 flex items-center justify-between gap-3">
+            <button type="button" class="rounded-full bg-primary px-4 py-2 text-sm font-bold text-white hover:bg-primaryDark" onclick="toggleDetails('${detailId}')">Show stats and details</button>
+            <button type="button" class="rounded-full border border-line bg-bg px-4 py-2 text-sm font-bold text-muted hover:bg-panel" onclick="deleteCard('${card.id}')">Delete</button>
+          </div>
+          <div id="${detailId}" class="mt-4 hidden space-y-4">
+            <div class="grid grid-cols-2 gap-3 text-sm">
+              ${statChip('Body Size', Number(card.body_size || 0), highestKeys.includes('body_size'))}
+              ${statChip('Food Chain & Energy', Number(card.food_chain_energy || 0), highestKeys.includes('food_chain_energy'))}
+              ${statChip('Habitat Adaptability', Number(card.habitat_adaptability || 0), highestKeys.includes('habitat_adaptability'))}
+              ${statChip('Intelligence', Number(card.intelligence || 0), highestKeys.includes('intelligence'))}
+              <div class="col-span-2">${statChip('Eco-Impact', Number(card.eco_impact || 0), highestKeys.includes('eco_impact'))}</div>
+            </div>
+            <div class="grid gap-3 sm:grid-cols-3">
+              <div class="rounded-xl bg-panel2 px-4 py-3"><div class="text-[10px] font-extrabold uppercase tracking-[0.16em] text-muted">Kingdom</div><div class="mt-1 text-sm font-bold">${kingdomText}</div></div>
+              <div class="rounded-xl bg-panel2 px-4 py-3"><div class="text-[10px] font-extrabold uppercase tracking-[0.16em] text-muted">Phylum</div><div class="mt-1 text-sm font-bold">${phylumText}</div></div>
+              <div class="rounded-xl bg-panel2 px-4 py-3"><div class="text-[10px] font-extrabold uppercase tracking-[0.16em] text-muted">Class</div><div class="mt-1 text-sm font-bold">${classText}</div></div>
+            </div>
+            <div class="rounded-2xl bg-panel2 p-4"><div class="text-[10px] font-extrabold uppercase tracking-[0.16em] text-muted">Bio</div><p class="mt-2 text-sm leading-relaxed text-ink">${bio}</p></div>
+            <div class="rounded-2xl bg-panel2 p-4"><div class="text-[10px] font-extrabold uppercase tracking-[0.16em] text-muted">Habitat / Origin</div><p class="mt-2 text-sm leading-relaxed text-ink">${habitat}</p></div>
+            <div class="rounded-2xl bg-panel2 p-4"><div class="text-[10px] font-extrabold uppercase tracking-[0.16em] text-muted">Fun Fact</div><p class="mt-2 text-sm leading-relaxed text-ink">${funFact}</p></div>
+            <div class="text-xs text-muted">Designed by ${designedBy}</div>
+          </div>
+        </article>`;
+      }).join('');
+
+      updateStarterDeck(cards.length);
+    }
+
+    function updateStarterDeck(cardCount) {
+      els.starterDeckCount.textContent = `${cardCount} / 5`;
+      els.starterDeckBar.style.width = `${Math.min(cardCount, 5) / 5 * 100}%`;
+      const ready = cardCount >= 5;
+      els.starterDeckMessage.textContent = ready ? 'Battle preparation is unlocked.' : 'Create at least 5 cards to unlock battle preparation.';
+      els.battlePrepLink.className = `rounded-full px-4 py-2 text-sm font-bold ${ready ? 'bg-primary text-white hover:bg-primaryDark' : 'bg-card text-muted ring-1 ring-line/60 hover:bg-panel'}`;
+    }
+
+
+    function toggleDetails(detailId) {
+      const el = document.getElementById(detailId);
+      if (el) el.classList.toggle('hidden');
+    }
+
+    window.deleteCard = deleteCard;
+    window.toggleDetails = toggleDetails;
+
+    els.clearAllBtn.addEventListener('click', async () => {
+  if (!confirm('Delete all saved Eco Battle cards from your account?')) return;
+  await clearAllCards();
+});
+
+    [els.searchInput, els.kingdomFilter, els.sortSelect].forEach(el => {
+  el.addEventListener('input', async () => { await renderCards(); });
+  el.addEventListener('change', async () => { await renderCards(); });
+});
+
+    async function initializeDeckPage() {
+  try {
+    const cards = await getCards();
+    buildKingdomFilter(cards);
+    await renderCards();
+  } catch (error) {
+    console.error(error);
+    els.resultsSummary.textContent = `Load failed: ${error.message}`;
+    els.cardGrid.innerHTML = `
+      <div class="col-span-full rounded-3xl bg-panel p-8 text-center shadow-soft ring-1 ring-line/60">
+        <div class="font-headline text-3xl font-bold italic text-warn">Could not load your cards</div>
+        <p class="mt-3 text-sm text-muted">Check your Supabase config or session.</p>
+      </div>`;
+  }
+}
+
+initializeDeckPage();
+  </script>
+</body>
+</html>

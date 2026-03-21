@@ -1,0 +1,983 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Battleground | Eco Battle</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,700;0,800;1,400;1,700;1,800&family=Manrope:wght@400;500;600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            bg:'#fdfae8',
+            panel:'#f1eedc',
+            panel2:'#f7f4e2',
+            card:'#fffdf5',
+            ink:'#1c1c11',
+            muted:'#5a6155',
+            line:'#c2c9bb',
+            primary:'#154212',
+            primaryDark:'#11330e',
+            warn:'#ba1a1a',
+            win:'#1b5e20'
+          },
+          fontFamily: {
+            headline:['Newsreader','serif'],
+            body:['Manrope','sans-serif']
+          },
+          boxShadow: {
+            soft:'0 18px 40px rgba(28,28,17,0.08)'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .material-symbols-outlined { font-variation-settings:'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    body { background:#fdfae8; }
+    .sidebar-link-active { background: #154212; color: #ffffff; border-radius: 999px 0 0 999px; }
+    .sidebar-link-active .material-symbols-outlined { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    .stat-chip-active { background:#154212 !important; color:#ffffff !important; border-color:#154212 !important; }
+    .stat-btn-active { background:#154212 !important; color:#ffffff !important; border-color:#154212 !important; }
+    .battle-scroll::-webkit-scrollbar { width: 8px; }
+    .battle-scroll::-webkit-scrollbar-thumb { background: rgba(21,66,18,0.22); border-radius: 999px; }
+  </style>
+</head>
+<body class="font-body text-ink">
+  <aside class="fixed inset-y-0 left-0 z-40 hidden w-64 border-r border-line/50 bg-panel2 lg:flex lg:flex-col">
+    <div class="border-b border-line/40 px-6 py-6">
+      <a href="index.html" class="font-headline text-3xl font-extrabold italic text-primary">Eco Battle</a>
+      <p class="mt-1 text-[11px] font-extrabold uppercase tracking-[0.22em] text-muted">SHSID Biology</p>
+    </div>
+    <nav class="flex-1 px-3 py-6 text-sm font-bold text-muted">
+      <a href="index.html" class="mb-1 flex items-center gap-3 rounded-full px-4 py-3 hover:bg-panel"><span class="material-symbols-outlined">menu_book</span><span>Field Journal</span></a>
+      <a href="create.html" class="mb-1 flex items-center gap-3 rounded-full px-4 py-3 hover:bg-panel"><span class="material-symbols-outlined">biotech</span><span>Card Lab</span></a>
+      <a href="deck.html" class="mb-1 flex items-center gap-3 rounded-full px-4 py-3 hover:bg-panel"><span class="material-symbols-outlined">style</span><span>My Collection</span></a>
+      <a href="lobby.html" class="mb-1 flex items-center gap-3 rounded-full px-4 py-3 hover:bg-panel"><span class="material-symbols-outlined">swords</span><span>War Room</span></a>
+      <a href="battle.html" class="mb-1 flex items-center gap-3 rounded-full px-4 py-3 hover:bg-panel"><span class="material-symbols-outlined">sports_martial_arts</span><span>Battle</span></a>
+      <a href="battleground.html" class="sidebar-link-active mb-1 flex items-center gap-3 px-4 py-3"><span class="material-symbols-outlined">stadium</span><span>Battleground</span></a>
+    </nav>
+    <div class="border-t border-line/40 px-6 py-5 text-xs text-muted">
+      Top Trumps mode: top card only, winner chooses next stat, winner takes played cards. Spoils are claimed once at the end of the whole match.
+    </div>
+  </aside>
+
+  <div class="min-h-screen lg:pl-64">
+    <header class="sticky top-0 z-30 flex items-center justify-between border-b-4 border-primary bg-bg px-5 py-4 lg:px-8">
+      <div>
+        <p class="text-[11px] font-extrabold uppercase tracking-[0.24em] text-primary">SHSID Eco Battle</p>
+        <h1 class="font-headline text-3xl font-extrabold italic text-primary sm:text-4xl">Battleground</h1>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="battle.html" class="rounded-full bg-panel px-4 py-2 text-sm font-bold text-muted hover:bg-panel2">Back to Battle</a>
+        <button id="newMatchBtn" type="button" class="rounded-full bg-primary px-5 py-2 text-sm font-bold text-white hover:bg-primaryDark">New Match</button>
+      </div>
+    </header>
+
+    <main class="mx-auto max-w-[1700px] px-5 py-6 lg:px-8">
+      <section id="missingDeckState" class="rounded-3xl bg-panel p-8 shadow-soft ring-1 ring-line/60">
+        <div class="text-[11px] font-extrabold uppercase tracking-[0.18em] text-muted">Active Deck Required</div>
+        <h2 class="mt-1 font-headline text-3xl font-bold italic text-primary">No valid active deck found</h2>
+        <p class="mt-3 max-w-2xl text-sm text-muted">Build and save exactly 5 cards in the War Room first. Battleground uses that saved deck, shuffles it once, then runs a Top Trumps match with top-card-only play.</p>
+        <div class="mt-6 flex flex-wrap gap-3">
+          <a href="lobby.html" class="rounded-full bg-primary px-5 py-2 text-sm font-bold text-white hover:bg-primaryDark">Go to War Room</a>
+          <a href="deck.html" class="rounded-full bg-card px-5 py-2 text-sm font-bold text-muted ring-1 ring-line/60 hover:bg-panel2">Open My Collection</a>
+        </div>
+      </section>
+
+      <section id="battleShell" class="hidden space-y-5">
+        <section class="rounded-3xl bg-panel p-5 shadow-soft ring-1 ring-line/60">
+          <div class="grid gap-3 xl:grid-cols-[repeat(4,minmax(0,1fr))]">
+            <div class="rounded-2xl bg-card p-4 ring-1 ring-line/60">
+              <div class="text-[11px] font-extrabold uppercase tracking-[0.18em] text-muted">Round</div>
+              <div id="roundLabel" class="mt-1 text-3xl font-extrabold text-primary">1</div>
+            </div>
+            <div class="rounded-2xl bg-card p-4 ring-1 ring-line/60">
+              <div class="text-[11px] font-extrabold uppercase tracking-[0.18em] text-muted">Chooser</div>
+              <div id="chooserLabel" class="mt-1 text-2xl font-extrabold text-primary">You</div>
+            </div>
+            <div class="rounded-2xl bg-card p-4 ring-1 ring-line/60">
+              <div class="text-[11px] font-extrabold uppercase tracking-[0.18em] text-muted">Cards Held</div>
+              <div class="mt-2 flex items-end justify-between gap-3">
+                <div><div class="text-xs font-bold uppercase tracking-[0.14em] text-muted">You</div><div id="playerCount" class="text-3xl font-extrabold text-primary">5</div></div>
+                <div class="pb-1 text-xl font-extrabold text-muted">:</div>
+                <div class="text-right"><div class="text-xs font-bold uppercase tracking-[0.14em] text-muted">Rival</div><div id="opponentCount" class="text-3xl font-extrabold text-primary">5</div></div>
+              </div>
+            </div>
+            <div class="rounded-2xl bg-card p-4 ring-1 ring-line/60">
+              <div class="text-[11px] font-extrabold uppercase tracking-[0.18em] text-muted">Center Pile</div>
+              <div id="centerPileCount" class="mt-1 text-3xl font-extrabold text-primary">0</div>
+            </div>
+          </div>
+
+          <div class="mt-4 grid gap-4 xl:grid-cols-[minmax(0,1fr)_220px] xl:items-center">
+            <div class="rounded-2xl bg-card p-4 ring-1 ring-line/60">
+              <div class="flex items-center justify-between gap-3">
+                <div class="text-[11px] font-extrabold uppercase tracking-[0.18em] text-muted">Choose a Stat</div>
+                <div id="statChooserHint" class="text-xs font-bold uppercase tracking-[0.14em] text-muted">Top card only</div>
+              </div>
+              <div id="statButtons" class="mt-3 grid grid-cols-5 gap-2"></div>
+            </div>
+            <div class="flex flex-wrap justify-start gap-3 xl:justify-end">
+              <button id="nextRoundBtn" type="button" class="rounded-full bg-panel2 px-5 py-2 text-sm font-bold text-muted ring-1 ring-line/60 hover:bg-card">Next Round</button>
+            </div>
+          </div>
+
+          <div id="battleMessage" class="mt-4 rounded-2xl bg-card p-4 text-sm text-muted ring-1 ring-line/60">Loading match.</div>
+        </section>
+
+        <section class="grid gap-5 xl:grid-cols-2">
+          <article class="rounded-3xl bg-panel p-4 shadow-soft ring-1 ring-line/60">
+            <div class="flex items-center justify-between gap-3">
+              <div>
+                <div class="text-[11px] font-extrabold uppercase tracking-[0.18em] text-muted">Player</div>
+                <h2 class="mt-1 font-headline text-[2rem] font-bold italic leading-tight text-primary">Your top card</h2>
+              </div>
+              <div id="playerCardTopBadge" class="rounded-full bg-card px-3 py-1 text-xs font-extrabold uppercase tracking-[0.16em] text-muted ring-1 ring-line/60">Highest stat</div>
+            </div>
+
+            <div id="playerCardFrame" class="mt-4 overflow-hidden rounded-[26px] bg-card ring-1 ring-line/60">
+              <div class="h-52 overflow-hidden border-b border-line/50 bg-panel2 2xl:h-56">
+                <img id="playerImage" src="" alt="Player card image" class="h-full w-full object-cover">
+              </div>
+              <div class="p-4">
+                <div class="flex items-start justify-between gap-3">
+                  <div>
+                    <div id="playerCommonName" class="font-headline text-[2.2rem] font-bold italic leading-tight text-primary">—</div>
+                    <div id="playerScientificName" class="mt-1 text-sm italic text-muted">—</div>
+                  </div>
+                  <div class="rounded-full bg-panel px-3 py-1 text-xs font-extrabold uppercase tracking-[0.14em] text-primary" id="playerKingdom">—</div>
+                </div>
+                <div class="mt-3 grid grid-cols-3 gap-2 text-sm">
+                  <div class="rounded-xl bg-panel2 px-3 py-2 ring-1 ring-line/50"><div class="text-[10px] font-extrabold uppercase tracking-[0.16em] text-muted">Phylum</div><div id="playerPhylum" class="mt-1 font-bold text-primary">—</div></div>
+                  <div class="rounded-xl bg-panel2 px-3 py-2 ring-1 ring-line/50"><div class="text-[10px] font-extrabold uppercase tracking-[0.16em] text-muted">Class</div><div id="playerClass" class="mt-1 font-bold text-primary">—</div></div>
+                  <div class="rounded-xl bg-panel2 px-3 py-2 ring-1 ring-line/50"><div class="text-[10px] font-extrabold uppercase tracking-[0.16em] text-muted">Designer</div><div id="playerDesigner" class="mt-1 truncate font-bold text-primary">—</div></div>
+                </div>
+                <div class="mt-3 rounded-2xl bg-panel2 p-3 text-sm text-muted ring-1 ring-line/50">
+                  <div class="text-[11px] font-extrabold uppercase tracking-[0.18em] text-muted">Bio</div>
+                  <p id="playerBio" class="mt-2 line-clamp-2">—</p>
+                </div>
+                <div class="mt-3 grid grid-cols-5 gap-2" id="playerStatsGrid"></div>
+              </div>
+            </div>
+          </article>
+
+          <article class="rounded-3xl bg-panel p-4 shadow-soft ring-1 ring-line/60">
+            <div class="flex items-center justify-between gap-3">
+              <div>
+                <div class="text-[11px] font-extrabold uppercase tracking-[0.18em] text-muted">Opponent</div>
+                <h2 class="mt-1 font-headline text-[2rem] font-bold italic leading-tight text-primary">Rival top card</h2>
+              </div>
+              <div id="opponentCardTopBadge" class="rounded-full bg-card px-3 py-1 text-xs font-extrabold uppercase tracking-[0.16em] text-muted ring-1 ring-line/60">Hidden</div>
+            </div>
+
+            <div id="opponentCardFrame" class="mt-4 overflow-hidden rounded-[26px] bg-card ring-1 ring-line/60">
+              <div class="h-52 overflow-hidden border-b border-line/50 bg-panel2 2xl:h-56">
+                <img id="opponentImage" src="" alt="Opponent card image" class="h-full w-full object-cover">
+              </div>
+              <div class="p-4">
+                <div class="flex items-start justify-between gap-3">
+                  <div>
+                    <div id="opponentCommonName" class="font-headline text-[2.2rem] font-bold italic leading-tight text-primary">—</div>
+                    <div id="opponentScientificName" class="mt-1 text-sm italic text-muted">—</div>
+                  </div>
+                  <div class="rounded-full bg-panel px-3 py-1 text-xs font-extrabold uppercase tracking-[0.14em] text-primary" id="opponentKingdom">—</div>
+                </div>
+                <div class="mt-3 grid grid-cols-3 gap-2 text-sm">
+                  <div class="rounded-xl bg-panel2 px-3 py-2 ring-1 ring-line/50"><div class="text-[10px] font-extrabold uppercase tracking-[0.16em] text-muted">Phylum</div><div id="opponentPhylum" class="mt-1 font-bold text-primary">—</div></div>
+                  <div class="rounded-xl bg-panel2 px-3 py-2 ring-1 ring-line/50"><div class="text-[10px] font-extrabold uppercase tracking-[0.16em] text-muted">Class</div><div id="opponentClass" class="mt-1 font-bold text-primary">—</div></div>
+                  <div class="rounded-xl bg-panel2 px-3 py-2 ring-1 ring-line/50"><div class="text-[10px] font-extrabold uppercase tracking-[0.16em] text-muted">Designer</div><div id="opponentDesigner" class="mt-1 truncate font-bold text-primary">—</div></div>
+                </div>
+                <div class="mt-3 rounded-2xl bg-panel2 p-3 text-sm text-muted ring-1 ring-line/50">
+                  <div class="text-[11px] font-extrabold uppercase tracking-[0.18em] text-muted">Bio</div>
+                  <p id="opponentBio" class="mt-2 line-clamp-2">—</p>
+                </div>
+                <div class="mt-3 grid grid-cols-5 gap-2" id="opponentStatsGrid"></div>
+              </div>
+            </div>
+          </article>
+        </section>
+
+        <section id="spoilsSection" class="hidden rounded-3xl bg-panel p-5 shadow-soft ring-1 ring-line/60">
+          <div class="grid gap-4 xl:grid-cols-[minmax(0,1fr)_320px] xl:items-start">
+            <div>
+              <div class="text-[11px] font-extrabold uppercase tracking-[0.18em] text-muted">Spoils of War</div>
+              <h2 class="mt-1 font-headline text-3xl font-bold italic text-primary">Claim one card at the end</h2>
+              <p id="spoilsIntro" class="mt-2 text-sm text-muted">The winner may claim one card from the losing player's original starting deck.</p>
+              <div id="spoilsGrid" class="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3"></div>
+            </div>
+            <div>
+              <details class="rounded-2xl bg-card p-4 ring-1 ring-line/60">
+                <summary class="cursor-pointer list-none text-sm font-bold text-primary">Battle log</summary>
+                <div id="battleLog" class="battle-scroll mt-4 max-h-56 space-y-3 overflow-auto pr-2"></div>
+              </details>
+              <div class="mt-4 rounded-2xl bg-card p-4 text-sm text-muted ring-1 ring-line/60">
+                Upcoming pile order stays hidden in Top Trumps mode. Only the active top cards are shown.
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="collapsedInfo" class="rounded-3xl bg-panel p-4 shadow-soft ring-1 ring-line/60">
+          <details>
+            <summary class="cursor-pointer list-none text-sm font-bold text-primary">Battle log</summary>
+            <div id="battleLogCompact" class="battle-scroll mt-4 max-h-48 space-y-3 overflow-auto pr-2"></div>
+          </details>
+        </section>
+      </section>
+    </main>
+  </div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script>
+  (async () => {
+    const session = await window.ecoBattle.getSession();
+    if (!session) {
+      window.location.href = "login.html";
+    }
+  })();
+</script>
+  <script>
+    const ACTIVE_DECK_KEY = 'ecoBattleActiveDeck';
+    const LAST_MATCH_KEY = 'ecoBattleLastMatch';
+    const client = window.ecoBattle?.client;
+    const DEFAULT_PREVIEW_IMAGE = "data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20800%20600%27%3E%3Crect%20width%3D%27800%27%20height%3D%27600%27%20fill%3D%27%23efe9d7%27/%3E%3Crect%20x%3D%2724%27%20y%3D%2724%27%20width%3D%27752%27%20height%3D%27552%27%20rx%3D%2728%27%20ry%3D%2728%27%20fill%3D%27%23fbf8ee%27%20stroke%3D%27%23d7d3c2%27%20stroke-width%3D%274%27%20stroke-dasharray%3D%2710%2010%27/%3E%3Ccircle%20cx%3D%27400%27%20cy%3D%27230%27%20r%3D%2770%27%20fill%3D%27%231b5e20%27%20opacity%3D%270.12%27/%3E%3Cpath%20d%3D%27M330%20360h140%27%20stroke%3D%27%231b5e20%27%20stroke-width%3D%2718%27%20stroke-linecap%3D%27round%27%20opacity%3D%270.5%27/%3E%3Cpath%20d%3D%27M355%20225l35%2035%2055-65%27%20fill%3D%27none%27%20stroke%3D%27%231b5e20%27%20stroke-width%3D%2718%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%20opacity%3D%270.7%27/%3E%3Ctext%20x%3D%27400%27%20y%3D%27485%27%20text-anchor%3D%27middle%27%20font-family%3D%27Arial%2C%20sans-serif%27%20font-size%3D%2734%27%20fill%3D%27%2366705d%27%3ENo%20image%20selected%3C/text%3E%3C/svg%3E";
+    const STAT_META = [
+      { key: 'body_size', label: 'Body Size', short: 'B' },
+      { key: 'food_chain_energy', label: 'Food Chain & Energy', short: 'F' },
+      { key: 'habitat_adaptability', label: 'Habitat Adaptability', short: 'H' },
+      { key: 'intelligence', label: 'Intelligence', short: 'I' },
+      { key: 'eco_impact', label: 'Eco-Impact', short: 'E' }
+    ];
+    const MAX_ROUNDS = 40;
+
+    const state = {
+      playerPile: [],
+      opponentPile: [],
+      centerPile: [],
+      chooser: 'player',
+      roundNumber: 1,
+      phase: 'choose', // choose | revealed | complete
+      selectedStat: null,
+      battleLog: [],
+      autoPickTimer: null,
+      lastPlayerCard: null,
+      lastOpponentCard: null,
+      originalPlayerDeck: [],
+      originalOpponentDeck: [],
+      finalWinner: null,
+      trophyClaimed: false
+    };
+
+    const missingDeckState = document.getElementById('missingDeckState');
+    const battleShell = document.getElementById('battleShell');
+    const roundLabel = document.getElementById('roundLabel');
+    const chooserLabel = document.getElementById('chooserLabel');
+    const playerCount = document.getElementById('playerCount');
+    const opponentCount = document.getElementById('opponentCount');
+    const centerPileCount = document.getElementById('centerPileCount');
+    const statButtons = document.getElementById('statButtons');
+    const statChooserHint = document.getElementById('statChooserHint');
+    const nextRoundBtn = document.getElementById('nextRoundBtn');
+    const battleMessage = document.getElementById('battleMessage');
+    const battleLog = document.getElementById('battleLog');
+    const battleLogCompact = document.getElementById('battleLogCompact');
+    const newMatchBtn = document.getElementById('newMatchBtn');
+    const spoilsSection = document.getElementById('spoilsSection');
+    const spoilsGrid = document.getElementById('spoilsGrid');
+    const spoilsIntro = document.getElementById('spoilsIntro');
+
+async function getActiveDeckFromSupabase() {
+  const session = await getCurrentSessionOrRedirect();
+  if (!session) return [];
+
+  const { data, error } = await client
+    .from('active_decks')
+    .select('card_ids')
+    .eq('user_id', session.user.id)
+    .maybeSingle();
+
+  if (error) throw error;
+
+  const ids = Array.isArray(data?.card_ids) ? data.card_ids : [];
+  if (!ids.length) return [];
+
+  const { data: cards, error: cardsError } = await client
+    .from('cards')
+    .select('*')
+    .eq('user_id', session.user.id)
+    .in('id', ids);
+
+  if (cardsError) throw cardsError;
+
+  const cardMap = new Map((cards || []).map(card => [card.id, card]));
+  return ids.map(id => cardMap.get(id)).filter(Boolean);
+}
+
+async function getActiveDeck() {
+  try {
+    const deck = await getActiveDeckFromSupabase();
+    if (deck.length) {
+      localStorage.setItem(ACTIVE_DECK_KEY, JSON.stringify(deck));
+      return deck;
+    }
+  } catch (error) {
+    console.error('Supabase active deck load failed:', error.message);
+  }
+
+  try {
+    const parsed = JSON.parse(localStorage.getItem(ACTIVE_DECK_KEY) || '[]');
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+async function getCurrentSessionOrRedirect() {
+  if (!window.ecoBattle || !client) {
+    alert('Supabase config not loaded. Check js/config.js.');
+    return null;
+  }
+
+  const session = await window.ecoBattle.getSession();
+  if (!session) {
+    window.location.href = 'login.html';
+    return null;
+  }
+
+  return session;
+}
+
+async function getUserCards() {
+  const session = await getCurrentSessionOrRedirect();
+  if (!session) return [];
+
+  const { data, error } = await client
+    .from('cards')
+    .select('id, common_name, scientific_name')
+    .eq('user_id', session.user.id);
+
+  if (error) throw error;
+  return data || [];
+}
+
+async function insertTrophyCard(card) {
+  const session = await getCurrentSessionOrRedirect();
+  if (!session) return;
+
+  const { error } = await client.from('cards').insert([{
+    user_id: session.user.id,
+    common_name: card.common_name,
+    scientific_name: card.scientific_name,
+    kingdom: card.kingdom,
+    phylum: card.phylum,
+    class_name: card.class_name,
+    bio: card.bio,
+    habitat: card.habitat,
+    fun_fact: card.fun_fact,
+    designed_by: card.designed_by,
+    image_url: card.image_url,
+    body_size: Number(card.body_size || 0),
+    food_chain_energy: Number(card.food_chain_energy || 0),
+    habitat_adaptability: Number(card.habitat_adaptability || 0),
+    intelligence: Number(card.intelligence || 0),
+    eco_impact: Number(card.eco_impact || 0),
+    total_points:
+      Number(card.body_size || 0) +
+      Number(card.food_chain_energy || 0) +
+      Number(card.habitat_adaptability || 0) +
+      Number(card.intelligence || 0) +
+      Number(card.eco_impact || 0)
+  }]);
+
+  if (error) throw error;
+}
+   async function saveLastMatchSummary(summary) {
+  const session = await getCurrentSessionOrRedirect();
+  if (!session) return;
+
+  const payload = {
+    user_id: session.user.id,
+    winner: summary.winner ?? null,
+    player_cards: Number(summary.player_cards ?? 0),
+    rival_cards: Number(summary.rival_cards ?? 0),
+    rounds_played: Number(summary.rounds_played ?? 0),
+    result_text: summary.result_text ?? null,
+    claimed_card_name: summary.claimed_card_name ?? null,
+    trophy_claimed: Boolean(summary.trophy_claimed),
+    finished_at: summary.finished_at ?? null
+  };
+
+  const { error } = await client
+    .from('match_summaries')
+    .insert([payload]);
+
+  if (error) throw error;
+
+  localStorage.setItem(LAST_MATCH_KEY, JSON.stringify(payload));
+}
+
+async function getLastMatchSummary() {
+  const session = await getCurrentSessionOrRedirect();
+  if (!session) return null;
+
+  try {
+    const { data, error } = await client
+      .from('match_summaries')
+      .select('*')
+      .eq('user_id', session.user.id)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (error) throw error;
+
+    if (data) {
+      localStorage.setItem(LAST_MATCH_KEY, JSON.stringify(data));
+      return data;
+    }
+  } catch (error) {
+    console.error('Supabase last match load failed:', error.message);
+  }
+
+  try {
+    const parsed = JSON.parse(localStorage.getItem(LAST_MATCH_KEY) || 'null');
+    return parsed && typeof parsed === 'object' ? parsed : null;
+  } catch {
+    return null;
+  }
+}
+
+async function updateLastMatchSummary(patch) {
+  const current = await getLastMatchSummary() || {};
+  const merged = { ...current, ...patch };
+  await saveLastMatchSummary(merged);
+}
+
+    function cloneCard(card) {
+      return JSON.parse(JSON.stringify(card));
+    }
+
+    function shuffle(array) {
+      const copy = [...array];
+      for (let i = copy.length - 1; i > 0; i -= 1) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function buildOpponentDeck(playerDeck) {
+      const order = shuffle(playerDeck);
+      return order.map((card, index) => {
+        const clone = cloneCard(card);
+        clone.id = `${clone.id || clone.common_name || 'card'}-rival-${index}`;
+        clone.designed_by = 'Rival Naturalist';
+        clone.bio = clone.bio || 'Rival deck card generated for battleground play.';
+        STAT_META.forEach(({ key }) => {
+          const baseValue = Number(clone[key] || 0);
+          const shift = Math.floor(Math.random() * 31) - 15;
+          clone[key] = Math.max(0, Math.min(200, baseValue + shift));
+        });
+        return clone;
+      });
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function getTopCard(pile) {
+      return pile.length ? pile[0] : null;
+    }
+
+    function getHighestStatKeys(card) {
+      if (!card) return [];
+      const highestValue = Math.max(...STAT_META.map(({ key }) => Number(card?.[key] || 0)));
+      return STAT_META.filter(({ key }) => Number(card?.[key] || 0) === highestValue).map(({ key }) => key);
+    }
+
+    function formatHighestLabel(card) {
+      const topKeys = getHighestStatKeys(card);
+      if (!topKeys.length) return 'Highest stat';
+      const labels = topKeys.map((key) => STAT_META.find((item) => item.key === key)?.label || key);
+      return `Top: ${labels.join(' / ')}`;
+    }
+
+    function statChipHtml(card, selectedStat, hidden = false) {
+      if (hidden) {
+        return STAT_META.map(({ short }) => `
+          <div class="rounded-xl border border-line/60 bg-panel2 px-2 py-2 text-center text-sm font-extrabold ring-1 ring-line/20">
+            <div class="text-[10px] uppercase tracking-[0.16em] text-muted">${short}</div>
+            <div class="mt-1">?</div>
+          </div>
+        `).join('');
+      }
+
+      const highestKeys = getHighestStatKeys(card);
+      return STAT_META.map(({ key, short }) => {
+        const isTop = highestKeys.includes(key);
+        const isSelected = selectedStat === key;
+        const classes = [
+          'rounded-xl', 'border', 'px-2', 'py-2', 'text-center', 'ring-1', 'text-sm', 'font-extrabold'
+        ];
+        if (isTop) {
+          classes.push('stat-chip-active');
+        } else {
+          classes.push('border-line/60', 'bg-panel2', 'text-primary', 'ring-line/20');
+        }
+        if (isSelected) {
+          classes.push('shadow');
+        }
+        return `<div class="${classes.join(' ')}"><div class="text-[10px] uppercase tracking-[0.16em] ${isTop ? 'text-white/80' : 'text-muted'}">${short}</div><div class="mt-1">${Number(card?.[key] || 0)}</div></div>`;
+      }).join('');
+    }
+
+    function renderCard(prefix, card, hidden = false) {
+      const image = document.getElementById(`${prefix}Image`);
+      const commonName = document.getElementById(`${prefix}CommonName`);
+      const scientificName = document.getElementById(`${prefix}ScientificName`);
+      const kingdom = document.getElementById(`${prefix}Kingdom`);
+      const phylum = document.getElementById(`${prefix}Phylum`);
+      const classEl = document.getElementById(`${prefix}Class`);
+      const designer = document.getElementById(`${prefix}Designer`);
+      const bio = document.getElementById(`${prefix}Bio`);
+      const statsGrid = document.getElementById(`${prefix}StatsGrid`);
+      const topBadge = document.getElementById(`${prefix}CardTopBadge`);
+
+      if (hidden) {
+        image.src = DEFAULT_PREVIEW_IMAGE;
+        commonName.textContent = 'Face-down card';
+        scientificName.textContent = 'Hidden until reveal';
+        kingdom.textContent = 'Hidden';
+        phylum.textContent = '—';
+        classEl.textContent = '—';
+        designer.textContent = '—';
+        bio.textContent = 'The non-choosing player does not see this card until the round resolves.';
+        statsGrid.innerHTML = statChipHtml(null, state.selectedStat, true);
+        topBadge.textContent = 'Hidden';
+        return;
+      }
+
+      image.src = card?.image_url || DEFAULT_PREVIEW_IMAGE;
+      image.onerror = () => { image.src = DEFAULT_PREVIEW_IMAGE; };
+      commonName.textContent = card?.common_name || '—';
+      scientificName.textContent = card?.scientific_name || '—';
+      kingdom.textContent = card?.kingdom || 'Unknown';
+      phylum.textContent = card?.phylum || '—';
+      classEl.textContent = card?.class_name || '—';
+      designer.textContent = card?.designed_by || '—';
+      bio.textContent = card?.bio || 'No bio provided.';
+      statsGrid.innerHTML = card ? statChipHtml(card, state.selectedStat) : '';
+      topBadge.textContent = formatHighestLabel(card);
+    }
+
+    function addBattleLog(title, message, tone = 'text-muted') {
+      const row = `
+        <div class="rounded-2xl bg-card p-4 ring-1 ring-line/60">
+          <div class="text-[11px] font-extrabold uppercase tracking-[0.16em] text-muted">${escapeHtml(title)}</div>
+          <div class="mt-2 text-sm ${tone}">${escapeHtml(message)}</div>
+        </div>
+      `;
+      state.battleLog.unshift(row);
+      battleLog.innerHTML = state.battleLog.join('');
+      battleLogCompact.innerHTML = state.battleLog.join('');
+    }
+
+    function chooseBestStat(card) {
+      const topKeys = getHighestStatKeys(card);
+      if (!topKeys.length) return STAT_META[0].key;
+      return topKeys[Math.floor(Math.random() * topKeys.length)];
+    }
+
+    function setMessage(text, tone = 'text-muted') {
+      battleMessage.textContent = text;
+      battleMessage.className = `mt-4 rounded-2xl bg-card p-4 text-sm ${tone} ring-1 ring-line/60`;
+    }
+
+    function renderStatButtons() {
+      const playerTurn = state.chooser === 'player';
+      const canChoose = state.phase === 'choose' && playerTurn;
+      statChooserHint.textContent = state.phase === 'complete'
+        ? 'Match complete'
+        : playerTurn
+          ? 'You choose from your top card'
+          : 'Rival is choosing from its top card';
+
+      statButtons.innerHTML = STAT_META.map(({ key, label, short }) => {
+        const active = state.selectedStat === key;
+        const disabled = !canChoose;
+        return `
+          <button
+            type="button"
+            data-stat="${key}"
+            ${disabled ? 'disabled' : ''}
+            title="${escapeHtml(label)}"
+            class="stat-select-btn rounded-2xl border px-3 py-3 text-center text-sm font-bold ring-1 transition ${
+              active
+                ? 'stat-btn-active'
+                : 'border-line/60 bg-card text-primary ring-line/20 hover:bg-panel2'
+            } ${disabled ? 'cursor-not-allowed opacity-60' : ''}"
+          >
+            <div class="text-lg leading-none">${short}</div>
+            <div class="mt-1 text-[10px] uppercase tracking-[0.16em] ${active ? 'text-white/80' : 'text-muted'}">${escapeHtml(label)}</div>
+          </button>
+        `;
+      }).join('');
+
+      document.querySelectorAll('.stat-select-btn').forEach((button) => {
+        button.addEventListener('click', () => {
+          if (!canChoose) return;
+          state.selectedStat = button.dataset.stat;
+          resolveRound();
+        });
+      });
+    }
+
+    function collectCenterPileTo(winner) {
+      if (!state.centerPile.length) return;
+      if (winner === 'player') {
+        state.playerPile.push(...state.centerPile);
+      } else if (winner === 'opponent') {
+        state.opponentPile.push(...state.centerPile);
+      }
+      state.centerPile = [];
+    }
+
+    function renderSpoils() {
+      if (state.phase !== 'complete') {
+        spoilsSection.classList.add('hidden');
+        return;
+      }
+
+      spoilsSection.classList.remove('hidden');
+      const winner = state.finalWinner;
+
+      if (winner === 'player') {
+        spoilsIntro.textContent = 'You won the whole battle. Claim exactly one card from the rival starting deck and add it to your collection.';
+        const cards = state.originalOpponentDeck;
+        spoilsGrid.innerHTML = cards.map((card, index) => `
+          <div class="rounded-2xl bg-card p-4 ring-1 ring-line/60">
+            <div class="aspect-[4/3] overflow-hidden rounded-xl bg-panel2">
+              <img src="${escapeHtml(card.image_url || DEFAULT_PREVIEW_IMAGE)}" alt="${escapeHtml(card.common_name || 'Rival card')}" class="h-full w-full object-cover" onerror="this.src='${DEFAULT_PREVIEW_IMAGE}'">
+            </div>
+            <div class="mt-3 font-headline text-2xl font-bold italic text-primary">${escapeHtml(card.common_name || 'Unknown')}</div>
+            <div class="mt-1 text-sm italic text-muted">${escapeHtml(card.scientific_name || '—')}</div>
+            <div class="mt-3 grid grid-cols-5 gap-2">${statChipHtml(card, null, false)}</div>
+            <button type="button" data-claim-index="${index}" class="claim-btn mt-4 w-full rounded-full bg-primary px-4 py-2 text-sm font-bold text-white hover:bg-primaryDark ${state.trophyClaimed ? 'pointer-events-none opacity-50' : ''}">
+              ${state.trophyClaimed ? 'Trophy claimed' : 'Claim this card'}
+            </button>
+          </div>
+        `).join('');
+        document.querySelectorAll('.claim-btn').forEach((btn) => {
+  btn.addEventListener('click', async () => {
+    if (state.trophyClaimed) return;
+    await claimSpoils(Number(btn.dataset.claimIndex));
+  });
+});
+      } else if (winner === 'opponent') {
+        spoilsIntro.textContent = 'Rival won the whole battle. In live multiplayer, the winner would now claim one card from your original starting deck.';
+        spoilsGrid.innerHTML = state.originalPlayerDeck.map((card) => `
+          <div class="rounded-2xl bg-card p-4 ring-1 ring-line/60 opacity-90">
+            <div class="aspect-[4/3] overflow-hidden rounded-xl bg-panel2">
+              <img src="${escapeHtml(card.image_url || DEFAULT_PREVIEW_IMAGE)}" alt="${escapeHtml(card.common_name || 'Your card')}" class="h-full w-full object-cover" onerror="this.src='${DEFAULT_PREVIEW_IMAGE}'">
+            </div>
+            <div class="mt-3 font-headline text-2xl font-bold italic text-primary">${escapeHtml(card.common_name || 'Unknown')}</div>
+            <div class="mt-1 text-sm italic text-muted">${escapeHtml(card.scientific_name || '—')}</div>
+          </div>
+        `).join('');
+      } else {
+        spoilsIntro.textContent = 'The match ended level. No spoils are claimed.';
+        spoilsGrid.innerHTML = '';
+      }
+    }
+
+    function normalizeName(value) {
+      return (value || '').trim().toLowerCase().replace(/\s+/g, ' ');
+    }
+
+    async function claimSpoils(index) {
+  const source = state.originalOpponentDeck[index];
+  if (!source || state.finalWinner !== 'player' || state.trophyClaimed) return;
+
+  try {
+    const existingCards = await getUserCards();
+
+    const baseCommon = source.common_name || 'Trophy Card';
+    const baseScientific = source.scientific_name || 'Specimen trophius';
+
+    let commonName = baseCommon;
+    let scientificName = baseScientific;
+    let counter = 1;
+
+    const exists = (cn, sn) => existingCards.some((card) =>
+      normalizeName(card.common_name) === normalizeName(cn) ||
+      normalizeName(card.scientific_name) === normalizeName(sn)
+    );
+
+    while (exists(commonName, scientificName)) {
+      counter += 1;
+      commonName = `${baseCommon} Trophy ${counter}`;
+      scientificName = `${baseScientific} trophy ${counter}`;
+    }
+
+    const trophy = cloneCard(source);
+    trophy.common_name = commonName;
+    trophy.scientific_name = scientificName;
+    trophy.designed_by = 'Spoils of War';
+    trophy.created_at = new Date().toISOString();
+
+    await insertTrophyCard(trophy);
+
+    state.trophyClaimed = true;
+    await updateLastMatchSummary({
+  claimed_card_name: commonName,
+  trophy_claimed: true
+});
+
+    setMessage(`Spoils claimed. ${commonName} was added to your collection.`, 'text-primary');
+    addBattleLog('Spoils of War', `${commonName} was added to your collection.`, 'text-primary');
+    renderSpoils();
+  } catch (error) {
+    console.error(error);
+
+    if (error.message && error.message.toLowerCase().includes('duplicate')) {
+      setMessage('Claim failed because that trophy card already exists in your collection.', 'text-warn');
+    } else {
+      setMessage(`Claim failed: ${error.message}`, 'text-warn');
+    }
+
+    addBattleLog('Spoils Error', error.message || 'Could not claim trophy card.', 'text-warn');
+  }
+}
+
+    async function checkMatchComplete() {
+      const finishedAt = new Date().toISOString();
+
+      if (!state.playerPile.length || !state.opponentPile.length) {
+  state.phase = 'complete';
+
+  let text = '';
+
+  if (state.playerPile.length === state.opponentPile.length) {
+    state.finalWinner = 'draw';
+    text = state.centerPile.length
+      ? 'Match complete. Both players ran out of cards with the center pile unresolved. The battle ends level.'
+      : 'Match complete. The battle ends level.';
+    setMessage(text);
+    addBattleLog('Final Result', text);
+  } else if (state.playerPile.length > state.opponentPile.length) {
+    state.finalWinner = 'player';
+    text = 'Match complete. You collected all the cards.';
+    setMessage(text, 'text-primary');
+    addBattleLog('Final Result', text, 'text-primary');
+  } else {
+    state.finalWinner = 'opponent';
+    text = 'Match complete. The rival collected all the cards.';
+    setMessage(text, 'text-warn');
+    addBattleLog('Final Result', text, 'text-warn');
+  }
+
+  await saveLastMatchSummary({
+    winner: state.finalWinner,
+    player_cards: state.playerPile.length,
+    rival_cards: state.opponentPile.length,
+    rounds_played: state.roundNumber,
+    result_text: text,
+    finished_at: finishedAt,
+    claimed_card_name: null,
+    trophy_claimed: false
+  });
+
+  renderSpoils();
+  return true;
+}
+
+      if (state.roundNumber >= MAX_ROUNDS) {
+        state.phase = 'complete';
+        let text = '';
+
+        if (state.playerPile.length > state.opponentPile.length) {
+          state.finalWinner = 'player';
+          text = `Round cap reached. You win on card count ${state.playerPile.length} to ${state.opponentPile.length}.`;
+          setMessage(text, 'text-primary');
+          addBattleLog('Final Result', text, 'text-primary');
+        } else if (state.playerPile.length < state.opponentPile.length) {
+          state.finalWinner = 'opponent';
+          text = `Round cap reached. Rival wins on card count ${state.opponentPile.length} to ${state.playerPile.length}.`;
+          setMessage(text, 'text-warn');
+          addBattleLog('Final Result', text, 'text-warn');
+        } else {
+          state.finalWinner = 'draw';
+          text = 'Round cap reached. The match ends level on card count.';
+          setMessage(text);
+          addBattleLog('Final Result', text);
+        }
+
+        await saveLastMatchSummary({
+          winner: state.finalWinner,
+          player_cards: state.playerPile.length,
+          rival_cards: state.opponentPile.length,
+          rounds_played: MAX_ROUNDS,
+          result_text: text,
+          finished_at: finishedAt,
+          claimed_card_name: null,
+          trophy_claimed: false
+        });
+        renderSpoils();
+        return true;
+      }
+
+      return false;
+    }
+
+    function resolveRound() {
+      if (state.phase !== 'choose' || !state.selectedStat) return;
+
+      const playerCard = state.playerPile.shift();
+      const opponentCard = state.opponentPile.shift();
+      state.centerPile.push(playerCard, opponentCard);
+
+      const playerValue = Number(playerCard?.[state.selectedStat] || 0);
+      const opponentValue = Number(opponentCard?.[state.selectedStat] || 0);
+      const statLabel = STAT_META.find((item) => item.key === state.selectedStat)?.label || state.selectedStat;
+
+      let text = '';
+      let tone = 'text-muted';
+
+      if (playerValue > opponentValue) {
+        collectCenterPileTo('player');
+        state.chooser = 'player';
+        text = `You win round ${state.roundNumber}. ${playerCard.common_name} beats ${opponentCard.common_name} on ${statLabel} (${playerValue} vs ${opponentValue}). You collect the played cards and choose next round.`;
+        tone = 'text-primary';
+      } else if (playerValue < opponentValue) {
+        collectCenterPileTo('opponent');
+        state.chooser = 'opponent';
+        text = `Rival wins round ${state.roundNumber}. ${opponentCard.common_name} beats ${playerCard.common_name} on ${statLabel} (${opponentValue} vs ${playerValue}). Rival collects the played cards and chooses next round.`;
+        tone = 'text-warn';
+      } else {
+        text = `Round ${state.roundNumber} is a draw on ${statLabel} (${playerValue} each). The played cards stay in the center pile and the same chooser continues.`;
+      }
+
+      state.lastPlayerCard = playerCard;
+      state.lastOpponentCard = opponentCard;
+      state.phase = 'revealed';
+      setMessage(text, tone);
+      addBattleLog(`Round ${state.roundNumber}`, text, tone);
+      renderBattle();
+    }
+
+    async function nextRound() {
+  if (state.phase !== 'revealed') return;
+
+  state.selectedStat = null;
+
+  if (await checkMatchComplete()) {
+    renderBattle();
+    return;
+  }
+
+  state.roundNumber += 1;
+  state.phase = 'choose';
+  state.lastPlayerCard = null;
+  state.lastOpponentCard = null;
+
+  const message = state.chooser === 'player'
+    ? `Round ${state.roundNumber}. Your turn to choose from your top card.`
+    : `Round ${state.roundNumber}. Rival is choosing from its top card.`;
+
+  setMessage(message);
+  renderBattle();
+  scheduleOpponentTurnIfNeeded();
+}
+
+    function scheduleOpponentTurnIfNeeded() {
+      clearTimeout(state.autoPickTimer);
+      if (state.phase !== 'choose' || state.chooser !== 'opponent') return;
+      state.autoPickTimer = setTimeout(() => {
+        const opponentCard = getTopCard(state.opponentPile);
+        state.selectedStat = chooseBestStat(opponentCard);
+        const statLabel = STAT_META.find((item) => item.key === state.selectedStat)?.label || state.selectedStat;
+        setMessage(`Rival chooses ${statLabel}. The round is resolving.`);
+        renderBattle();
+        setTimeout(resolveRound, 550);
+      }, 650);
+    }
+
+    function renderBattle() {
+      playerCount.textContent = String(state.playerPile.length);
+      opponentCount.textContent = String(state.opponentPile.length);
+      centerPileCount.textContent = String(state.centerPile.length);
+      roundLabel.textContent = String(Math.min(state.roundNumber, MAX_ROUNDS));
+      chooserLabel.textContent = state.chooser === 'player' ? 'You' : 'Rival';
+
+      const playerCard = state.phase === 'revealed' ? state.lastPlayerCard : getTopCard(state.playerPile);
+      const opponentCard = state.phase === 'revealed' ? state.lastOpponentCard : getTopCard(state.opponentPile);
+
+      const hideOpponent = state.phase === 'choose';
+      renderCard('player', playerCard, false);
+      renderCard('opponent', opponentCard, hideOpponent);
+      renderStatButtons();
+
+      nextRoundBtn.disabled = state.phase !== 'revealed';
+      nextRoundBtn.className = `rounded-full px-5 py-2 text-sm font-bold ${
+        state.phase === 'revealed'
+          ? 'bg-panel2 text-muted ring-1 ring-line/60 hover:bg-card'
+          : 'bg-card text-muted ring-1 ring-line/60 cursor-not-allowed'
+      }`;
+    }
+
+    async function initializeMatch() {
+      clearTimeout(state.autoPickTimer);
+      const activeDeck = await getActiveDeck();
+      const validDeck = activeDeck.length === 5;
+      missingDeckState.classList.toggle('hidden', validDeck);
+      battleShell.classList.toggle('hidden', !validDeck);
+
+      if (!validDeck) return;
+
+      state.originalPlayerDeck = activeDeck.map(cloneCard);
+      state.originalOpponentDeck = buildOpponentDeck(activeDeck);
+      state.playerPile = shuffle(state.originalPlayerDeck.map(cloneCard));
+      state.opponentPile = shuffle(state.originalOpponentDeck.map(cloneCard));
+      state.centerPile = [];
+      state.chooser = 'player';
+      state.roundNumber = 1;
+      state.phase = 'choose';
+      state.selectedStat = null;
+      state.battleLog = [];
+      state.lastPlayerCard = null;
+      state.lastOpponentCard = null;
+      state.finalWinner = null;
+      state.trophyClaimed = false;
+      battleLog.innerHTML = '';
+      battleLogCompact.innerHTML = '';
+      spoilsSection.classList.add('hidden');
+      addBattleLog('Match Ready', 'Decks shuffled. You choose the first category from your top card.', 'text-muted');
+      setMessage('Round 1. Your turn to choose from your top card.');
+      renderBattle();
+    }
+
+    nextRoundBtn.addEventListener('click', async () => {
+  await nextRound();
+});
+
+newMatchBtn.addEventListener('click', async () => {
+  await initializeMatch();
+});
+
+initializeMatch();
+    
+  </script>
+</body>
+</html>

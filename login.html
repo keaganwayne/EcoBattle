@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Eco Battle | Login</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=Manrope:wght@200..800&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            surface: '#fdfae8',
+            panel: '#f4f0df',
+            card: '#fbf8ee',
+            line: '#d9d3bc',
+            primary: '#154212',
+            primaryDark: '#0f300d',
+            secondary: '#27657f',
+            text: '#1c1c11',
+            muted: '#5f6657',
+            warn: '#a5381c',
+          },
+          fontFamily: {
+            headline: ['Newsreader'],
+            body: ['Manrope'],
+          },
+          boxShadow: {
+            soft: '0 20px 40px rgba(28,28,17,0.08)',
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    .forest-bg {
+      background-image:
+        linear-gradient(rgba(21, 66, 18, 0.45), rgba(21, 66, 18, 0.45)),
+        url('https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1600&q=80');
+      background-size: cover;
+      background-position: center;
+    }
+    .tab-active {
+      background: #154212;
+      color: white;
+    }
+    .tab-inactive {
+      background: #ebe6d3;
+      color: #154212;
+    }
+  </style>
+</head>
+<body data-auth-mode="login" class="bg-surface font-body text-on-surface min-h-screen flex flex-col">
+  <main class="min-h-screen forest-bg flex items-center justify-center p-6">
+    <div class="w-full max-w-5xl overflow-hidden rounded-3xl bg-surface shadow-soft grid lg:grid-cols-[1.05fr_0.95fr]">
+      <section class="hidden lg:flex flex-col justify-between bg-primary text-white p-12 relative">
+        <div class="absolute inset-0 opacity-10 pointer-events-none overflow-hidden">
+          <span class="material-symbols-outlined absolute -top-8 -left-8 text-[180px]" style="font-variation-settings:'FILL' 1;">eco</span>
+          <span class="material-symbols-outlined absolute -bottom-12 -right-8 text-[220px]" style="font-variation-settings:'FILL' 1;">psychiatry</span>
+        </div>
+
+        <div class="relative z-10">
+          <p class="text-xs uppercase tracking-[0.3em] text-white/75">SHSID</p>
+          <h1 class="mt-3 font-headline text-5xl italic font-semibold">Eco Battle</h1>
+          <p class="mt-4 max-w-md text-white/80 leading-7">
+            Sign in to access your own collection, active deck, and battle records. Every card and deck should belong to one account only.
+          </p>
+        </div>
+
+        <div class="relative z-10 space-y-5">
+          <div class="rounded-2xl border border-white/10 bg-white/10 p-5 backdrop-blur-sm">
+            <p class="text-[11px] uppercase tracking-[0.24em] text-white/70">What this unlocks</p>
+            <ul class="mt-3 space-y-2 text-sm text-white/90">
+              <li>• Your own organism card collection</li>
+              <li>• Your own 5-card War Room deck</li>
+              <li>• Your own battle history</li>
+            </ul>
+          </div>
+          <p class="text-xs text-white/65">No shared browser data. No cross-account card leakage.</p>
+        </div>
+      </section>
+
+      <section class="p-8 sm:p-10 lg:p-12 flex flex-col justify-center">
+        <div class="mb-8">
+          <div class="inline-flex h-12 w-12 items-center justify-center rounded-full bg-panel text-primary">
+            <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">school</span>
+          </div>
+          <h2 class="mt-4 font-headline text-3xl text-primary">Student Portal</h2>
+          <p class="mt-2 text-sm text-muted">Sign in or create an account before entering the Field Journal.</p>
+        </div>
+
+        <div class="mb-6 inline-flex rounded-full bg-panel p-1 text-sm font-bold">
+          <button id="tabSignIn" type="button" class="tab-active rounded-full px-5 py-2">Sign in</button>
+          <button id="tabSignUp" type="button" class="tab-inactive rounded-full px-5 py-2">Create account</button>
+        </div>
+
+        <form id="authForm" class="space-y-5">
+          <div id="usernameWrap" class="space-y-1.5 hidden">
+            <label for="username" class="px-1 text-[10px] font-bold uppercase tracking-[0.2em] text-muted">Username</label>
+            <div class="relative">
+              <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-muted text-sm">badge</span>
+              <input id="username" type="text" class="w-full rounded-2xl border border-line bg-card py-3.5 pl-10 pr-4 text-sm focus:border-secondary focus:ring-secondary" placeholder="Naturalist name" autocomplete="username" />
+            </div>
+          </div>
+
+          <div class="space-y-1.5">
+            <label for="email" class="px-1 text-[10px] font-bold uppercase tracking-[0.2em] text-muted">Email</label>
+            <div class="relative">
+              <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-muted text-sm">mail</span>
+              <input id="email" type="email" class="w-full rounded-2xl border border-line bg-card py-3.5 pl-10 pr-4 text-sm focus:border-secondary focus:ring-secondary" placeholder="student@school.edu" autocomplete="email" required />
+            </div>
+          </div>
+
+          <div class="space-y-1.5">
+            <label for="password" class="px-1 text-[10px] font-bold uppercase tracking-[0.2em] text-muted">Password</label>
+            <div class="relative">
+              <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-muted text-sm">lock</span>
+              <input id="password" type="password" class="w-full rounded-2xl border border-line bg-card py-3.5 pl-10 pr-4 text-sm focus:border-secondary focus:ring-secondary" placeholder="••••••••" autocomplete="current-password" required />
+            </div>
+          </div>
+
+          <div id="confirmWrap" class="space-y-1.5 hidden">
+            <label for="confirmPassword" class="px-1 text-[10px] font-bold uppercase tracking-[0.2em] text-muted">Confirm password</label>
+            <div class="relative">
+              <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-muted text-sm">verified</span>
+              <input id="confirmPassword" type="password" class="w-full rounded-2xl border border-line bg-card py-3.5 pl-10 pr-4 text-sm focus:border-secondary focus:ring-secondary" placeholder="Repeat password" autocomplete="new-password" />
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between gap-3 text-xs">
+            <label class="inline-flex items-center gap-2 text-muted">
+              <input id="rememberMe" type="checkbox" class="h-4 w-4 rounded border-line text-primary focus:ring-primary" checked />
+              Remember session
+            </label>
+            <button id="resetPasswordBtn" type="button" class="font-bold text-primary hover:underline">Reset password</button>
+          </div>
+
+          <button id="submitBtn" type="submit" class="inline-flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-br from-primary to-[#2d5a27] px-6 py-3.5 text-sm font-bold text-white shadow-lg transition hover:brightness-105 active:scale-[0.99]">
+            <span id="submitLabel">Begin Session</span>
+            <span class="material-symbols-outlined text-sm">arrow_forward</span>
+          </button>
+        </form>
+
+        <p id="statusMessage" class="mt-5 min-h-[1.5rem] text-sm text-muted"></p>
+
+        <div class="mt-8 rounded-2xl border border-line bg-panel p-5 text-sm text-muted">
+          <p class="font-bold text-primary">After login</p>
+          <p class="mt-2">You will be sent to <code class="rounded bg-card px-1 py-0.5">index.html</code>. All protected pages should later use the shared auth guard.</p>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script src="js/config.js"></script>
+  <script>
+    const auth = window.ecoBattle.client.auth;
+
+    const form = document.getElementById('authForm');
+    const tabSignIn = document.getElementById('tabSignIn');
+    const tabSignUp = document.getElementById('tabSignUp');
+    const usernameWrap = document.getElementById('usernameWrap');
+    const confirmWrap = document.getElementById('confirmWrap');
+    const usernameInput = document.getElementById('username');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const confirmPasswordInput = document.getElementById('confirmPassword');
+    const submitLabel = document.getElementById('submitLabel');
+    const statusMessage = document.getElementById('statusMessage');
+    const resetPasswordBtn = document.getElementById('resetPasswordBtn');
+
+    let mode = 'signin';
+
+    function setMode(nextMode) {
+      mode = nextMode;
+      const signingIn = mode === 'signin';
+
+      tabSignIn.className = `${signingIn ? 'tab-active' : 'tab-inactive'} rounded-full px-5 py-2`;
+      tabSignUp.className = `${!signingIn ? 'tab-active' : 'tab-inactive'} rounded-full px-5 py-2`;
+
+      usernameWrap.classList.toggle('hidden', signingIn);
+      confirmWrap.classList.toggle('hidden', signingIn);
+      usernameInput.toggleAttribute('required', !signingIn);
+      confirmPasswordInput.toggleAttribute('required', !signingIn);
+
+      submitLabel.textContent = signingIn ? 'Begin Session' : 'Create Account';
+      statusMessage.textContent = '';
+      statusMessage.className = 'mt-5 min-h-[1.5rem] text-sm text-muted';
+      passwordInput.autocomplete = signingIn ? 'current-password' : 'new-password';
+    }
+
+    function setStatus(message, type = 'normal') {
+      const classes = {
+        normal: 'mt-5 min-h-[1.5rem] text-sm text-muted',
+        error: 'mt-5 min-h-[1.5rem] text-sm text-warn',
+        success: 'mt-5 min-h-[1.5rem] text-sm text-primary',
+      };
+      statusMessage.textContent = message;
+      statusMessage.className = classes[type] || classes.normal;
+    }
+
+    async function redirectIfLoggedIn() {
+      const session = await window.ecoBattle.getSession();
+      if (session) {
+        window.location.href = 'index.html';
+      }
+    }
+
+    tabSignIn.addEventListener('click', () => setMode('signin'));
+    tabSignUp.addEventListener('click', () => setMode('signup'));
+
+    resetPasswordBtn.addEventListener('click', async () => {
+      const email = emailInput.value.trim();
+      if (!email) {
+        setStatus('Enter your email first, then click reset password.', 'error');
+        return;
+      }
+
+      try {
+        const { error } = await auth.resetPasswordForEmail(email, {
+          redirectTo: window.location.origin + window.location.pathname.replace(/[^/]*$/, '') + 'login.html',
+        });
+        if (error) throw error;
+        setStatus('Password reset email sent. Check your inbox.', 'success');
+      } catch (error) {
+        setStatus(error.message || 'Password reset failed.', 'error');
+      }
+    });
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const email = emailInput.value.trim();
+      const password = passwordInput.value;
+
+      if (mode === 'signup') {
+        const username = usernameInput.value.trim();
+        const confirmPassword = confirmPasswordInput.value;
+
+        if (password !== confirmPassword) {
+          setStatus('Passwords do not match.', 'error');
+          return;
+        }
+
+        try {
+          setStatus('Creating account...', 'normal');
+          const { error } = await auth.signUp({
+            email,
+            password,
+            options: {
+              data: { username },
+            },
+          });
+          if (error) throw error;
+          setStatus('Account created. Check your email to confirm, then sign in.', 'success');
+          setMode('signin');
+          form.reset();
+        } catch (error) {
+          setStatus(error.message || 'Sign-up failed.', 'error');
+        }
+        return;
+      }
+
+      try {
+        setStatus('Signing in...', 'normal');
+        const { error } = await auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        window.location.href = 'index.html';
+      } catch (error) {
+        setStatus(error.message || 'Sign-in failed.', 'error');
+      }
+    });
+
+    setMode('signin');
+    redirectIfLoggedIn();
+  </script>
+</body>
+</html>
