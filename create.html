@@ -438,11 +438,37 @@ requireSessionOrRedirect();
       preview.image.src = DEFAULT_PREVIEW_IMAGE;
     });
 
-    Object.values(fields).forEach((field) => {
-      if (field.type === 'file') return;
-      field.addEventListener('input', updatePreview);
-      field.addEventListener('change', updatePreview);
-    });
+    const statKeys = [
+  'body_size',
+  'food_chain_energy',
+  'habitat_adaptability',
+  'intelligence',
+  'eco_impact'
+];
+
+function bindStatSlider(key) {
+  const el = fields[key];
+  if (!el) return;
+
+  const syncStat = () => {
+    valueLabels[key].textContent = el.value;
+    preview[key].textContent = el.value;
+    updateBudget();
+    highlightHighestStat();
+  };
+
+  el.addEventListener('input', syncStat);
+  el.addEventListener('change', syncStat);
+}
+
+    Object.entries(fields).forEach(([key, field]) => {
+  if (!field || field.type === 'file') return;
+  if (statKeys.includes(key)) return; // handled explicitly below
+  field.addEventListener('input', updatePreview);
+  field.addEventListener('change', updatePreview);
+});
+
+statKeys.forEach(bindStatSlider);
 
     clearButton.addEventListener('click', () => {
       saveStatusEl.textContent = '';
@@ -527,6 +553,7 @@ requireSessionOrRedirect();
 });
 
     resetFormToDefaults();
+    updatePreview();
   </script>
 </body>
 </html>
