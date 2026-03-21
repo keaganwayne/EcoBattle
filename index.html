@@ -245,7 +245,7 @@
     const COLLECTION_KEY = 'ecoBattleCards';
     const ACTIVE_DECK_KEY = 'ecoBattleActiveDeck';
     const LAST_MATCH_KEY = 'ecoBattleLastMatch';
-    const client = window.ecoBattle?.client;
+    const sbClient = window.ecoBattle?.client;
     let currentSession = null;
 
     const statMeta = [
@@ -312,7 +312,7 @@ async function getLastMatch() {
 }
 
 async function requireSessionOrRedirect() {
-  if (!window.ecoBattle || !client) {
+  if (!window.ecoBattle || !sbClient) {
     alert('Supabase config not loaded. Check js/config.js.');
     return null;
   }
@@ -331,7 +331,7 @@ async function getCardsFromSupabase() {
   const session = currentSession || await requireSessionOrRedirect();
   if (!session) return [];
 
-  const { data, error } = await client
+  const { data, error } = await sbClient
     .from('cards')
     .select('*')
     .eq('user_id', session.user.id)
@@ -345,7 +345,7 @@ async function getActiveDeckFromSupabase() {
   const session = currentSession || await requireSessionOrRedirect();
   if (!session) return [];
 
-  const { data, error } = await client
+  const { data, error } = await sbClient
     .from('active_decks')
     .select('card_ids')
     .eq('user_id', session.user.id)
@@ -356,7 +356,7 @@ async function getActiveDeckFromSupabase() {
   const ids = Array.isArray(data?.card_ids) ? data.card_ids : [];
   if (!ids.length) return [];
 
-  const { data: cards, error: cardsError } = await client
+  const { data: cards, error: cardsError } = await sbClient
     .from('cards')
     .select('*')
     .eq('user_id', session.user.id)
@@ -372,7 +372,7 @@ async function getLastMatchFromSupabase() {
   const session = currentSession || await requireSessionOrRedirect();
   if (!session) return null;
 
-  const { data, error } = await client
+  const { data, error } = await sbClient
     .from('match_summaries')
     .select('*')
     .eq('user_id', session.user.id)

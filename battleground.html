@@ -245,7 +245,7 @@
   <script>
     const ACTIVE_DECK_KEY = 'ecoBattleActiveDeck';
     const LAST_MATCH_KEY = 'ecoBattleLastMatch';
-    const client = window.ecoBattle?.client;
+    const sbClient = window.ecoBattle?.client;
     const DEFAULT_PREVIEW_IMAGE = "data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20800%20600%27%3E%3Crect%20width%3D%27800%27%20height%3D%27600%27%20fill%3D%27%23efe9d7%27/%3E%3Crect%20x%3D%2724%27%20y%3D%2724%27%20width%3D%27752%27%20height%3D%27552%27%20rx%3D%2728%27%20ry%3D%2728%27%20fill%3D%27%23fbf8ee%27%20stroke%3D%27%23d7d3c2%27%20stroke-width%3D%274%27%20stroke-dasharray%3D%2710%2010%27/%3E%3Ccircle%20cx%3D%27400%27%20cy%3D%27230%27%20r%3D%2770%27%20fill%3D%27%231b5e20%27%20opacity%3D%270.12%27/%3E%3Cpath%20d%3D%27M330%20360h140%27%20stroke%3D%27%231b5e20%27%20stroke-width%3D%2718%27%20stroke-linecap%3D%27round%27%20opacity%3D%270.5%27/%3E%3Cpath%20d%3D%27M355%20225l35%2035%2055-65%27%20fill%3D%27none%27%20stroke%3D%27%231b5e20%27%20stroke-width%3D%2718%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%20opacity%3D%270.7%27/%3E%3Ctext%20x%3D%27400%27%20y%3D%27485%27%20text-anchor%3D%27middle%27%20font-family%3D%27Arial%2C%20sans-serif%27%20font-size%3D%2734%27%20fill%3D%27%2366705d%27%3ENo%20image%20selected%3C/text%3E%3C/svg%3E";
     const STAT_META = [
       { key: 'body_size', label: 'Body Size', short: 'B' },
@@ -296,7 +296,7 @@ async function getActiveDeckFromSupabase() {
   const session = await getCurrentSessionOrRedirect();
   if (!session) return [];
 
-  const { data, error } = await client
+  const { data, error } = await sbClient
     .from('active_decks')
     .select('card_ids')
     .eq('user_id', session.user.id)
@@ -307,7 +307,7 @@ async function getActiveDeckFromSupabase() {
   const ids = Array.isArray(data?.card_ids) ? data.card_ids : [];
   if (!ids.length) return [];
 
-  const { data: cards, error: cardsError } = await client
+  const { data: cards, error: cardsError } = await sbClient
     .from('cards')
     .select('*')
     .eq('user_id', session.user.id)
@@ -339,7 +339,7 @@ async function getActiveDeck() {
 }
 
 async function getCurrentSessionOrRedirect() {
-  if (!window.ecoBattle || !client) {
+  if (!window.ecoBattle || !sbClient) {
     alert('Supabase config not loaded. Check js/config.js.');
     return null;
   }
@@ -357,7 +357,7 @@ async function getUserCards() {
   const session = await getCurrentSessionOrRedirect();
   if (!session) return [];
 
-  const { data, error } = await client
+  const { data, error } = await sbClient
     .from('cards')
     .select('id, common_name, scientific_name')
     .eq('user_id', session.user.id);
@@ -370,7 +370,7 @@ async function insertTrophyCard(card) {
   const session = await getCurrentSessionOrRedirect();
   if (!session) return;
 
-  const { error } = await client.from('cards').insert([{
+  const { error } = await sbClient.from('cards').insert([{
     user_id: session.user.id,
     common_name: card.common_name,
     scientific_name: card.scientific_name,
@@ -413,7 +413,7 @@ async function insertTrophyCard(card) {
     finished_at: summary.finished_at ?? null
   };
 
-  const { error } = await client
+  const { error } = await sbClient
     .from('match_summaries')
     .insert([payload]);
 
@@ -427,7 +427,7 @@ async function getLastMatchSummary() {
   if (!session) return null;
 
   try {
-    const { data, error } = await client
+    const { data, error } = await sbClient
       .from('match_summaries')
       .select('*')
       .eq('user_id', session.user.id)

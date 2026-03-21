@@ -218,7 +218,7 @@ let currentSession = null;
 const sbClient = window.ecoBattle?.client;
 
 async function requireSessionOrRedirect() {
-  if (!window.ecoBattle || !client) {
+  if (!window.ecoBattle || !sbClient) {
     alert('Supabase config not loaded. Check js/config.js.');
     return null;
   }
@@ -234,7 +234,7 @@ async function requireSessionOrRedirect() {
 }
 
 async function getUserCards() {
-  const { data, error } = await client
+  const { data, error } = await sbClient
     .from('cards')
     .select('id, common_name, scientific_name')
     .eq('user_id', currentSession.user.id);
@@ -244,7 +244,7 @@ async function getUserCards() {
 }
 
 async function insertCard(card) {
-  const { error } = await client.from('cards').insert([{
+  const { error } = await sbClient.from('cards').insert([{
     user_id: currentSession.user.id,
     common_name: card.common_name,
     scientific_name: card.scientific_name,
