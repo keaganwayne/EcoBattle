@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>War Room | Eco Battle</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,700;0,800;1,400;1,700;1,800&family=Manrope:wght@400;500;600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: { bg:'#fdfae8', panel:'#f1eedc', panel2:'#f7f4e2', card:'#fffdf5', ink:'#1c1c11', muted:'#5a6155', line:'#c2c9bb', primary:'#154212', primaryDark:'#11330e', blue:'#dceff8', warn:'#ba1a1a' },
+          fontFamily: { headline:['Newsreader','serif'], body:['Manrope','sans-serif'] },
+          boxShadow: { soft:'0 18px 40px rgba(28,28,17,0.08)' }
+        }
+      }
+    }
+  </script>
+  <style>
+    .material-symbols-outlined { font-variation-settings:'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    body { background:#fdfae8; }
+    .sidebar-link-active { background: #154212; color: #ffffff; border-radius: 999px 0 0 999px; }
+    .sidebar-link-active .material-symbols-outlined { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    .card-selected { outline: 3px solid #154212; background: #eef6e8; }
+    .stat-chip-active { background:#154212 !important; color:#fff !important; }
+    .stat-chip-active .stat-chip-label { color:rgba(255,255,255,.8) !important; }
+    .stat-chip-active .stat-chip-value { color:#fff !important; }
+  </style>
+</head>
+<body class="font-body text-ink">
+  <aside class="fixed inset-y-0 left-0 z-40 hidden w-64 border-r border-line/50 bg-panel2 lg:flex lg:flex-col">
+    <div class="border-b border-line/40 px-6 py-6">
+      <a href="index.html" class="font-headline text-3xl font-extrabold italic text-primary">Eco Battle</a>
+      <p class="mt-1 text-[11px] font-extrabold uppercase tracking-[0.22em] text-muted">SHSID Biology</p>
+    </div>
+    <nav class="flex-1 px-3 py-6 text-sm font-bold text-muted">
+      <a href="index.html" class="mb-1 flex items-center gap-3 rounded-full px-4 py-3 hover:bg-panel"><span class="material-symbols-outlined">menu_book</span><span>Field Journal</span></a>
+      <a href="create.html" class="mb-1 flex items-center gap-3 rounded-full px-4 py-3 hover:bg-panel"><span class="material-symbols-outlined">biotech</span><span>Card Lab</span></a>
+      <a href="deck.html" class="mb-1 flex items-center gap-3 rounded-full px-4 py-3 hover:bg-panel"><span class="material-symbols-outlined">style</span><span>My Collection</span></a>
+      <a href="lobby.html" class="sidebar-link-active mb-1 flex items-center gap-3 px-4 py-3"><span class="material-symbols-outlined">swords</span><span>War Room</span></a>
+      <a href="battle.html" class="mb-1 flex items-center gap-3 rounded-full px-4 py-3 hover:bg-panel"><span class="material-symbols-outlined">sports_martial_arts</span><span>Battle</span></a>
+    </nav>
+    <div class="border-t border-line/40 px-6 py-5 text-xs text-muted">War Room is only for choosing the 5-card battle deck. Active lobbies belong on the Battle page.</div>
+  </aside>
+
+  <div class="min-h-screen lg:pl-64">
+    <header class="sticky top-0 z-30 flex items-center justify-between border-b-4 border-primary bg-bg px-5 py-4 lg:px-8">
+      <div>
+        <p class="text-[11px] font-extrabold uppercase tracking-[0.24em] text-primary">SHSID Eco Battle</p>
+        <h1 class="font-headline text-3xl font-extrabold italic text-primary sm:text-4xl">War Room</h1>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="deck.html" class="rounded-full bg-panel px-4 py-2 text-sm font-bold text-muted hover:bg-panel2">My Collection</a>
+        <a id="battleNowBtn" href="battle.html" class="rounded-full bg-primary px-5 py-2 text-sm font-bold text-white hover:bg-primaryDark">Go to Battle</a>
+      </div>
+    </header>
+
+    <main class="mx-auto max-w-7xl px-5 py-8 lg:px-8">
+      <section class="grid gap-8 xl:grid-cols-[360px_minmax(0,1fr)]">
+        <div class="space-y-6">
+          <div class="rounded-3xl bg-panel p-6 shadow-soft ring-1 ring-line/60">
+            <div class="flex items-end justify-between gap-4">
+              <div>
+                <div class="text-[11px] font-extrabold uppercase tracking-[0.18em] text-muted">Deck Selection</div>
+                <h2 class="mt-1 font-headline text-3xl font-bold italic text-primary">Choose 5 cards</h2>
+              </div>
+              <div class="text-right">
+                <div class="text-[11px] font-extrabold uppercase tracking-[0.18em] text-muted">Selected</div>
+                <div id="selectedCount" class="mt-1 font-headline text-3xl font-bold text-primary">0 / 5</div>
+              </div>
+            </div>
+            <div class="mt-4 h-3 overflow-hidden rounded-full bg-card"><div id="selectedBar" class="h-full rounded-full bg-primary" style="width:0%"></div></div>
+            <p id="selectionMessage" class="mt-4 text-sm text-muted">Select exactly five cards from your saved collection to prepare a battle deck.</p>
+            <div id="slotGrid" class="mt-6 grid grid-cols-5 gap-2"></div>
+            <div class="mt-6 flex flex-wrap gap-3">
+              <button id="clearSelectionBtn" type="button" class="rounded-full border border-line bg-bg px-4 py-2 text-sm font-bold text-muted hover:bg-panel">Clear Selection</button>
+              <button id="openLobbyBtn" type="button" class="rounded-full bg-primary px-5 py-2 text-sm font-bold text-white hover:bg-primaryDark">Save Active Deck</button>
+            </div>
+            <p id="openLobbyStatus" class="mt-4 text-sm text-muted"></p>
+          </div>
+
+          <div class="rounded-3xl bg-blue p-6 shadow-soft">
+            <h3 class="font-headline text-2xl font-bold italic text-primary">Stat key</h3>
+            <p class="mt-3 text-sm leading-relaxed text-ink"><span class="font-bold">B</span> = Body Size, <span class="font-bold">F</span> = Food Chain &amp; Energy, <span class="font-bold">H</span> = Habitat Adaptability, <span class="font-bold">I</span> = Intelligence, <span class="font-bold">E</span> = Eco-Impact.</p>
+            <p class="mt-2 text-sm leading-relaxed text-ink">The highest stat on each card is highlighted in green for quick scanning.</p>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <div class="rounded-3xl bg-panel p-6 shadow-soft ring-1 ring-line/60">
+            <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+              <div>
+                <div class="text-[11px] font-extrabold uppercase tracking-[0.18em] text-muted">Saved Collection</div>
+                <h2 class="mt-1 font-headline text-3xl font-bold italic text-primary">Selectable cards</h2>
+                <p class="mt-2 text-sm text-muted">Click a card to select or deselect it. Exactly five must be selected before moving into Battle.</p>
+              </div>
+              <a href="create.html" class="rounded-full bg-primary px-4 py-2 text-sm font-bold text-white hover:bg-primaryDark">Create Card</a>
+            </div>
+          </div>
+
+          <div id="cardGrid" class="grid gap-6 md:grid-cols-2 2xl:grid-cols-3"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const ACTIVE_DECK_KEY = 'ecoBattleActiveDeck';
+    const LAST_MATCH_KEY = 'ecoBattleLastMatch';
+    const sbClient = window.ecoBattle?.client;
+    let currentSession = null;
+    const DEFAULT_PREVIEW_IMAGE = 'data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 800 600%22%3E%3Crect width=%22800%22 height=%22600%22 fill=%22%23efe9d7%22/%3E%3Crect x=%2224%22 y=%2224%22 width=%22752%22 height=%22552%22 rx=%2228%22 ry=%2228%22 fill=%22%23fbf8ee%22 stroke=%22%23d7d3c2%22 stroke-width=%224%22 stroke-dasharray=%2210 10%22/%3E%3Ccircle cx=%22400%22 cy=%22230%22 r=%2270%22 fill=%22%231b5e20%22 opacity=%220.12%22/%3E%3Cpath d=%22M330 360h140%22 stroke=%22%231b5e20%22 stroke-width=%2218%22 stroke-linecap=%22round%22 opacity=%220.5%22/%3E%3Cpath d=%22M355 225l35 35 55-65%22 fill=%22none%22 stroke=%22%231b5e20%22 stroke-width=%2218%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22 opacity=%220.7%22/%3E%3Ctext x=%22400%22 y=%22485%22 text-anchor=%22middle%22 font-family=%22Arial, sans-serif%22 font-size=%2234%22 fill=%22%2366705d%22%3ENo image selected%3C/text%3E%3C/svg%3E';
+    const deckStatus = document.getElementById('deckStatus');
+    const deckMiniGrid = document.getElementById('deckMiniGrid');
+    const startTestBattleBtn = document.getElementById('startTestBattleBtn');
+    const testBattleMessage = document.getElementById('testBattleMessage');
+    const lastMatchCard = document.getElementById('lastMatchCard');
+    const activeLobbyArea = document.getElementById('activeLobbyArea');
+    const hostLobbyBtn = document.getElementById('hostLobbyBtn');
+    const BATTLE_POLL_MS = 5000;
+    let battlePollHandle = null;
+
+    async function requireSessionOrRedirect() {
+      if (!window.ecoBattle || !sbClient) {
+        alert('Supabase config not loaded. Check js/config.js.');
+        return null;
+      }
+      const session = await window.ecoBattle.getSession();
+      if (!session) {
+        window.location.href = 'login.html';
+        return null;
+      }
+      currentSession = session;
+      return session;
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    async function getActiveDeckFromSupabase() {
+      const session = currentSession || await requireSessionOrRedirect();
+      if (!session) return [];
+      const { data, error } = await sbClient.from('active_decks').select('card_ids').eq('user_id', session.user.id).maybeSingle();
+      if (error) throw error;
+      const ids = Array.isArray(data?.card_ids) ? data.card_ids : [];
+      if (!ids.length) return [];
+      const { data: cards, error: cardsError } = await sbClient.from('cards').select('*').eq('user_id', session.user.id).in('id', ids);
+      if (cardsError) throw cardsError;
+      const cardMap = new Map((cards || []).map(card => [card.id, card]));
+      return ids.map(id => cardMap.get(id)).filter(Boolean);
+    }
+
+    async function getActiveDeck() {
+      try {
+        const deck = await getActiveDeckFromSupabase();
+        if (deck.length) {
+          localStorage.setItem(ACTIVE_DECK_KEY, JSON.stringify(deck));
+          return deck;
+        }
+      } catch (error) {
+        console.error('Supabase active deck load failed:', error.message);
+      }
+      try {
+        const parsed = JSON.parse(localStorage.getItem(ACTIVE_DECK_KEY) || '[]');
+        return Array.isArray(parsed) ? parsed : [];
+      } catch {
+        return [];
+      }
+    }
+
+    async function getLastMatchFromSupabase() {
+      const session = currentSession || await requireSessionOrRedirect();
+      if (!session) return null;
+      const { data, error } = await sbClient.from('match_summaries').select('*').eq('user_id', session.user.id).order('created_at', { ascending: false }).limit(1).maybeSingle();
+      if (error) throw error;
+      return data || null;
+    }
+
+    async function getLastMatch() {
+      try {
+        const match = await getLastMatchFromSupabase();
+        if (match) {
+          localStorage.setItem(LAST_MATCH_KEY, JSON.stringify(match));
+          return match;
+        }
+      } catch (error) {
+        console.error('Supabase last match load failed:', error.message);
+      }
+      try {
+        const parsed = JSON.parse(localStorage.getItem(LAST_MATCH_KEY) || 'null');
+        return parsed && typeof parsed === 'object' ? parsed : null;
+      } catch {
+        return null;
+      }
+    }
+
+    async function renderLastMatch() {
+      const lastMatch = await getLastMatch();
+      if (!lastMatch) {
+        lastMatchCard.innerHTML = '<div class="font-bold text-primary">No recent result</div><div class="mt-2 text-muted">Finish a battleground match and return here. This panel can show the latest winner, score, and claimed trophy.</div>';
+        return;
+      }
+      const winnerTone = lastMatch.winner === 'player' ? 'text-primary' : lastMatch.winner === 'opponent' ? 'text-warn' : 'text-muted';
+      const winnerLabel = lastMatch.winner === 'player' ? 'You won' : lastMatch.winner === 'opponent' ? 'Rival won' : 'Draw';
+      const claimed = lastMatch.claimed_card_name ? `<div class="mt-3 rounded-2xl bg-panel p-4 ring-1 ring-line/60"><div class="text-[11px] font-extrabold uppercase tracking-[0.18em] text-muted">Claimed Card</div><div class="mt-1 font-bold text-primary">${escapeHtml(lastMatch.claimed_card_name)}</div></div>` : '';
+      const finishedAt = lastMatch.finished_at ? new Date(lastMatch.finished_at).toLocaleString() : '—';
+      lastMatchCard.innerHTML = `<div class="grid gap-4 lg:grid-cols-[minmax(0,1fr)_220px] lg:items-start"><div><div class="font-bold ${winnerTone}">${winnerLabel}</div><div class="mt-2 text-muted">${escapeHtml(lastMatch.result_text || 'No summary recorded.')}</div>${claimed}</div><div class="rounded-2xl bg-panel p-4 ring-1 ring-line/60"><div class="text-[11px] font-extrabold uppercase tracking-[0.18em] text-muted">Cards Held</div><div class="mt-2 flex items-end justify-between gap-3"><div><div class="text-xs font-bold uppercase tracking-[0.14em] text-muted">You</div><div class="text-2xl font-extrabold text-primary">${Number(lastMatch.player_cards ?? 0)}</div></div><div class="pb-1 text-lg font-extrabold text-muted">:</div><div class="text-right"><div class="text-xs font-bold uppercase tracking-[0.14em] text-muted">Rival</div><div class="text-2xl font-extrabold text-primary">${Number(lastMatch.rival_cards ?? 0)}</div></div></div><div class="mt-3 text-xs text-muted">Finished: ${escapeHtml(finishedAt)}</div></div></div>`;
+    }
+
+    async function renderDeckStatus() {
+      const deck = await getActiveDeck();
+      const ready = deck.length === 5;
+      deckStatus.innerHTML = ready ? `<div class="font-bold text-primary">Active deck ready: 5 / 5 cards selected</div><div class="mt-2 text-muted">You can now use this page as the multiplayer hub for active lobbies and battle startup.</div>` : `<div class="font-bold text-warn">No valid active deck</div><div class="mt-2 text-muted">Go to War Room and select exactly five cards.</div>`;
+      deckMiniGrid.innerHTML = Array.from({length:5}).map((_, i) => {
+        const card = deck[i];
+        if (!card) return `<div class="aspect-[3/4] rounded-xl border-2 border-dashed border-line bg-card"></div>`;
+        return `<div class="aspect-[3/4] overflow-hidden rounded-xl border border-line bg-card"><img src="${escapeHtml(card.image_url || DEFAULT_PREVIEW_IMAGE)}" alt="${escapeHtml(card.common_name || 'Selected card')}" class="h-full w-full object-cover" onerror="this.src='${DEFAULT_PREVIEW_IMAGE}'"></div>`;
+      }).join('');
+      startTestBattleBtn.className = `rounded-full px-5 py-2 text-sm font-bold ${ready ? 'bg-primary text-white hover:bg-primaryDark' : 'bg-card text-muted ring-1 ring-line/60 cursor-not-allowed'}`;
+      startTestBattleBtn.setAttribute('aria-disabled', ready ? 'false' : 'true');
+    }
+
+    async function getCurrentUserId() { const session = currentSession || await requireSessionOrRedirect(); return session?.user?.id || null; }
+    async function getMyLobby() { const userId = await getCurrentUserId(); if (!userId) return null; const { data, error } = await sbClient.from('lobbies').select('*').or(`host_user_id.eq.${userId},guest_user_id.eq.${userId}`).in('status', ['open','full','in_progress']).order('created_at', { ascending: false }).limit(1).maybeSingle(); if (error) throw error; return data || null; }
+    async function getOpenLobbies() { const userId = await getCurrentUserId(); if (!userId) return []; const { data, error } = await sbClient.from('lobbies').select('*').eq('status','open').is('guest_user_id', null).neq('host_user_id', userId).order('created_at', { ascending: false }); if (error) throw error; return data || []; }
+    async function getMyActiveMatch() { const userId = await getCurrentUserId(); if (!userId) return null; const { data, error } = await sbClient.from('matches').select('*').or(`host_user_id.eq.${userId},guest_user_id.eq.${userId}`).is('winner_user_id', null).order('created_at', { ascending: false }).limit(1).maybeSingle(); if (error) throw error; return data || null; }
+    async function hostLobby() { const deck = await getActiveDeck(); if (deck.length !== 5) { testBattleMessage.textContent = 'War Room must save exactly five cards before you can host a lobby.'; testBattleMessage.className = 'mt-5 text-sm text-warn'; return; } const { error } = await sbClient.rpc('create_lobby'); if (error) throw error; }
+    async function joinLobby(lobbyId) { const deck = await getActiveDeck(); if (deck.length !== 5) { testBattleMessage.textContent = 'War Room must save exactly five cards before you can join a lobby.'; testBattleMessage.className = 'mt-5 text-sm text-warn'; return; } const { error } = await sbClient.rpc('join_lobby', { p_lobby_id: lobbyId }); if (error) throw error; }
+    async function leaveLobby(lobbyId) { const { error } = await sbClient.rpc('leave_lobby', { p_lobby_id: lobbyId }); if (error) throw error; }
+    async function setLobbyReady(lobbyId, ready) { const { error } = await sbClient.rpc('set_lobby_ready', { p_lobby_id: lobbyId, p_ready: ready }); if (error) throw error; }
+    async function startMatchIfReady(lobbyId) { const { data, error } = await sbClient.rpc('start_match_if_ready', { p_lobby_id: lobbyId }); if (error) throw error; return data || null; }
+    function formatLobbyTime(value) { if (!value) return '—'; return new Date(value).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); }
+
+    async function renderLobbyHub() {
+      const deck = await getActiveDeck();
+      let activeMatch = await getMyActiveMatch();
+      let myLobby = await getMyLobby();
+      const openLobbies = await getOpenLobbies();
+      const userId = await getCurrentUserId();
+      const canHost = deck.length === 5 && !myLobby && !activeMatch;
+      hostLobbyBtn.disabled = !canHost;
+      hostLobbyBtn.className = `rounded-full px-4 py-2 text-sm font-bold ${canHost ? 'bg-primary text-white hover:bg-primaryDark' : 'bg-card text-muted ring-1 ring-line/60 cursor-not-allowed'}`;
+      if (myLobby && myLobby.status === 'full' && myLobby.host_ready && myLobby.guest_ready && !activeMatch) {
+        await startMatchIfReady(myLobby.id);
+        activeMatch = await getMyActiveMatch();
+        myLobby = await getMyLobby();
+        if (activeMatch?.lobby_id) { window.location.href = `battleground.html?lobby=${encodeURIComponent(activeMatch.lobby_id)}`; return; }
+      }
+      const resumeCard = activeMatch ? `<div class="rounded-3xl bg-card p-5 ring-1 ring-line/60"><div class="text-[11px] font-extrabold uppercase tracking-[0.18em] text-muted">Resume Match</div><div class="mt-1 font-headline text-2xl font-bold italic text-primary">Game in progress</div><p class="mt-2 text-sm text-muted">Round ${Number(activeMatch.round_number || 1)} · Phase: ${escapeHtml(activeMatch.phase || 'choose')}</p><div class="mt-4"><a href="battleground.html?lobby=${encodeURIComponent(activeMatch.lobby_id)}" class="rounded-full bg-primary px-4 py-2 text-sm font-bold text-white hover:bg-primaryDark">Return to Game</a></div></div>` : '';
+      let myLobbyCard = '';
+      if (myLobby && !activeMatch) {
+        const amHost = myLobby.host_user_id === userId;
+        const myReady = amHost ? myLobby.host_ready : myLobby.guest_ready;
+        const opponentReady = amHost ? myLobby.guest_ready : myLobby.host_ready;
+        if (myLobby.status === 'open') {
+          myLobbyCard = `<div class="rounded-3xl bg-card p-5 ring-1 ring-line/60"><div class="text-[11px] font-extrabold uppercase tracking-[0.18em] text-muted">Your Lobby</div><div class="mt-1 font-headline text-2xl font-bold italic text-primary">Waiting for opponent</div><p class="mt-2 text-sm text-muted">Created at ${escapeHtml(formatLobbyTime(myLobby.created_at))}. Other players can join this lobby from their Battle page.</p><div class="mt-4 flex flex-wrap gap-3"><button data-action="leave-lobby" data-id="${myLobby.id}" class="rounded-full bg-card px-4 py-2 text-sm font-bold text-muted ring-1 ring-line/60 hover:bg-panel2">Cancel Lobby</button></div></div>`;
+        } else if (myLobby.status === 'full') {
+          myLobbyCard = `<div class="rounded-3xl bg-card p-5 ring-1 ring-line/60"><div class="text-[11px] font-extrabold uppercase tracking-[0.18em] text-muted">Ready Room</div><div class="mt-1 font-headline text-2xl font-bold italic text-primary">Both players are here</div><div class="mt-4 grid gap-3 md:grid-cols-2"><div class="rounded-2xl bg-panel p-4 ring-1 ring-line/60"><div class="text-[11px] font-extrabold uppercase tracking-[0.18em] text-muted">${amHost ? 'You' : 'Host'}</div><div class="mt-1 font-bold ${amHost ? (myReady ? 'text-primary' : 'text-warn') : (myLobby.host_ready ? 'text-primary' : 'text-warn')}">${amHost ? (myReady ? 'Ready' : 'Not ready') : (myLobby.host_ready ? 'Ready' : 'Not ready')}</div></div><div class="rounded-2xl bg-panel p-4 ring-1 ring-line/60"><div class="text-[11px] font-extrabold uppercase tracking-[0.18em] text-muted">${amHost ? 'Guest' : 'You'}</div><div class="mt-1 font-bold ${!amHost ? (myReady ? 'text-primary' : 'text-warn') : (myLobby.guest_ready ? 'text-primary' : 'text-warn')}">${!amHost ? (myReady ? 'Ready' : 'Not ready') : (myLobby.guest_ready ? 'Ready' : 'Not ready')}</div></div></div><p class="mt-3 text-sm text-muted">${opponentReady ? 'Opponent is ready.' : 'Waiting for the other player to ready up.'}</p><div class="mt-4 flex flex-wrap gap-3"><button data-action="${myReady ? 'unready' : 'ready'}" data-id="${myLobby.id}" class="rounded-full bg-primary px-4 py-2 text-sm font-bold text-white hover:bg-primaryDark">${myReady ? 'Set Not Ready' : 'Ready'}</button><button data-action="leave-lobby" data-id="${myLobby.id}" class="rounded-full bg-card px-4 py-2 text-sm font-bold text-muted ring-1 ring-line/60 hover:bg-panel2">${amHost ? 'Cancel Lobby' : 'Leave Lobby'}</button></div></div>`;
+        }
+      }
+      const openLobbyList = openLobbies.length ? openLobbies.map((lobby) => `<div class="flex items-center justify-between gap-4 rounded-2xl bg-card p-4 ring-1 ring-line/60"><div><div class="text-[11px] font-extrabold uppercase tracking-[0.18em] text-muted">Open Lobby</div><div class="mt-1 font-bold text-primary">Created ${escapeHtml(formatLobbyTime(lobby.created_at))}</div><div class="mt-1 text-sm text-muted">Waiting for an opponent.</div></div><button data-action="join-lobby" data-id="${lobby.id}" class="rounded-full bg-primary px-4 py-2 text-sm font-bold text-white hover:bg-primaryDark">Join</button></div>`).join('') : `<div class="rounded-2xl bg-card p-5 ring-1 ring-line/60 text-sm text-muted">No open lobbies right now.</div>`;
+      activeLobbyArea.innerHTML = `${resumeCard}${myLobbyCard}<div class="rounded-3xl bg-panel p-5 ring-1 ring-line/60"><div class="text-[11px] font-extrabold uppercase tracking-[0.18em] text-muted">Available Lobbies</div><div class="mt-1 font-headline text-2xl font-bold italic text-primary">Join another player</div><div class="mt-4 space-y-3">${openLobbyList}</div></div>`;
+    }
+
+    startTestBattleBtn.addEventListener('click', async () => {
+      try {
+        const activeMatch = await getMyActiveMatch();
+        if (activeMatch?.lobby_id) { window.location.href = `battleground.html?lobby=${encodeURIComponent(activeMatch.lobby_id)}`; return; }
+        const myLobby = await getMyLobby();
+        if (myLobby?.status === 'open') { testBattleMessage.textContent = 'Your lobby is waiting for an opponent. Stay here until someone joins.'; testBattleMessage.className = 'mt-5 text-sm text-muted'; return; }
+        if (myLobby?.status === 'full') { testBattleMessage.textContent = 'Both players are in the ready room. Click Ready to begin.'; testBattleMessage.className = 'mt-5 text-sm text-muted'; return; }
+        testBattleMessage.textContent = 'Host or join a lobby first.'; testBattleMessage.className = 'mt-5 text-sm text-warn';
+      } catch (error) { console.error(error); testBattleMessage.textContent = `Could not enter battleground: ${error.message}`; testBattleMessage.className = 'mt-5 text-sm text-warn'; }
+    });
+
+    hostLobbyBtn.addEventListener('click', async () => {
+      try { await hostLobby(); testBattleMessage.textContent = 'Lobby created. Waiting for an opponent.'; testBattleMessage.className = 'mt-5 text-sm text-primary'; await renderLobbyHub(); }
+      catch (error) { console.error(error); testBattleMessage.textContent = `Could not host lobby: ${error.message}`; testBattleMessage.className = 'mt-5 text-sm text-warn'; }
+    });
+
+    activeLobbyArea.addEventListener('click', async (event) => {
+      const btn = event.target.closest('[data-action]'); if (!btn) return;
+      const lobbyId = btn.dataset.id; const action = btn.dataset.action;
+      try {
+        if (action === 'join-lobby') { await joinLobby(lobbyId); testBattleMessage.textContent = 'Joined lobby. Ready up when you are set.'; testBattleMessage.className = 'mt-5 text-sm text-primary'; }
+        else if (action === 'leave-lobby') { await leaveLobby(lobbyId); testBattleMessage.textContent = 'Lobby updated.'; testBattleMessage.className = 'mt-5 text-sm text-muted'; }
+        else if (action === 'ready') { await setLobbyReady(lobbyId, true); testBattleMessage.textContent = 'You are ready. Waiting for the other player.'; testBattleMessage.className = 'mt-5 text-sm text-primary'; }
+        else if (action === 'unready') { await setLobbyReady(lobbyId, false); testBattleMessage.textContent = 'You are no longer marked ready.'; testBattleMessage.className = 'mt-5 text-sm text-muted'; }
+        await renderLobbyHub();
+      } catch (error) { console.error(error); testBattleMessage.textContent = `Lobby action failed: ${error.message}`; testBattleMessage.className = 'mt-5 text-sm text-warn'; }
+    });
+
+    async function initializeBattlePage() {
+      try {
+        await requireSessionOrRedirect();
+        await renderDeckStatus();
+        await renderLastMatch();
+        await renderLobbyHub();
+        if (battlePollHandle) clearInterval(battlePollHandle);
+        battlePollHandle = setInterval(async () => { try { await renderLobbyHub(); } catch (error) { console.error(error); } }, BATTLE_POLL_MS);
+      } catch (error) { console.error(error); testBattleMessage.textContent = `Could not load battle data: ${error.message}`; testBattleMessage.className = 'mt-5 text-sm text-warn'; }
+    }
+
+    initializeBattlePage();
+  </script>
+</body>
+</html>
